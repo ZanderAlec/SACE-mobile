@@ -2,24 +2,21 @@ import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-function StepIndicator() {
-  let steps = 3;
-  let curStep = 1;
-
+function StepIndicator({stepsNum, currStep, CurrStepText = ""}) {
 
   const stepIndicatorRenderer = () => {
     const indicators = [];
 
 
-    for (let i = 0; i <= steps; i++ ){
+    for (let i = 0; i <= stepsNum; i++ ){
       indicators.push(
         <View style={styles.indicatorContainer}>
             {
-              i < curStep ?
+              i < currStep ?
                 <FontAwesome5 name="check-circle" size={24} color="blue" /> 
                 
 
-                : i === curStep ?
+                : i === currStep ?
                 <View  style = {styles.iconContainer}>
                     <FontAwesome5 name="dot-circle"   style={styles.stepIcon} size={24}color="blue" />
                 </View>
@@ -30,12 +27,12 @@ function StepIndicator() {
             }
             
             {
-            i != steps &&
+            i != stepsNum &&
              <view style={styles.activeLine}/>
             }
 
             
-            {/* {i == curStep &&  <Text style={styles.curStepText}>Title  dfadf adf ad fad{i}</Text>} */}
+            {/* {i == currStep &&  <Text style={styles.curStepText}>{CurrStepText}</Text>} */}
         </View>
       );
     }

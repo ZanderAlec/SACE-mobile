@@ -4,30 +4,61 @@ import {View, Text, StyleSheet, Button} from 'react-native'
 import FormTextInput from '../../components/forms/FormTextInput'
 import { useForm } from "react-hook-form";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import {visitSchema} from '../../schemas/visitForm/schema'
+
+const visitSchemaAdress = visitSchema.pick({
+    idArea: true,
+    estado: true, 
+    municipio: true,
+    bairro: true,
+    logradouro: true,
+    
+    //específicos
+    numeroImovel: true,
+    lado: true,
+    categoriaLocalidade: true,
+    tipoImovel: true,
+    status: true,
+    complemento: true,
+});
 
 export default function Endereco() {
 
-    const { control, handleSubmit} = useForm(); 
+   const form = useForm({
+    resolver: zodResolver(visitSchema),
+    defaultValues: {
+      idArea: "",
+      estado: "", 
+      municipio: "",
+      bairro: "",
+      logradouro: "",
+      
+      //específicos
+      numeroImovel: "",
+      lado: "",
+      categoriaLocalidade: "",
+      tipoImovel: "",
+      status: "",
+      complemento: "",
+    }
 
-    const next = () => {
-      console.log('next');
+   });
+
+    const onSubmit = (data) => {
+      console.log(data);
     }
 
 
   return (
-    <View>
-         <View style={styles.container}>
-          <Text>Endereço do imóvel</Text>
-        </View>
+    // <View>
+    //      <View style={styles.container}>
+    //       <Text>Endereço do imóvel</Text>
+    //     </View>
         
-        <Text>Name</Text>
-        <FormTextInput control = {control} rules ={{required: "Email is required"}} name = {"Name"} style={styles.textInput}/>
-
-        <Button
-          title="Press me"
-          onPress={next}
-        />
-    </View>
+    //     <Text>Name</Text>
+    //     <FormTextInput control = {control} rules ={{required: "Email is required"}} name = {"Name"} style={styles.textInput}/>
+    // </View>
   )
 }
 

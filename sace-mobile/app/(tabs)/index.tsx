@@ -1,16 +1,30 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import Endereco from '../form/endereco'
+import { View, Text, StyleSheet, Button } from 'react-native'
+
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 
 import StepIndicator from '../form/stepIndicator'
-
+import Endereco from '../form/endereco'
+import SelecaoFormulario from '../form/selecaoFormulario'
 
 
 function Multi_Step_form() {
+
+  const [steps, setSteps] = useState(4);
+  const [currStep, setCurrStep] = useState(0);
+
+  const nextStep = () => {
+    if (currStep + 1 < steps)
+      setCurrStep(currStep+1);
+  }
+
+  const prevStep = () => {
+    if (currStep - 1 >= 0)
+      setCurrStep(currStep-1);
+  }
 
   return (
     <View style={styles.bkgGray}>
@@ -18,25 +32,36 @@ function Multi_Step_form() {
         <Text>
           Agentes {">"}  Novo registro de campo
         </Text>
-      </View>
-      
-      <View style ={[styles.container, styles.bkgWhite]}>
-        <Endereco/>
       </View> */}
+      
+     
       <View style = {styles.indicatorContainer}>
-        {/* <View>1</View>
-        <View>2</View>
-        <View>3</View> */}
+        <StepIndicator stepsNum={steps}  currStep={currStep}/>
+      </View>
+
+       <View style ={[styles.container, styles.bkgWhite]}>
+        {
+          currStep === 0 ? 
+          <Endereco/>
+
+          : currStep === 1 &&
+          <SelecaoFormulario/>
+        }
+        
+      </View>
+
+      <View>
+        <Button
+          title="Prev"
+          onPress={prevStep}
+        />
 
 
-
-        {/* <FontAwesome5 name="circle" size={24} color="blue" />
-        <view style={styles.activeLine}/>
-        <FontAwesome5 name="dot-circle" size={24} color="blue" />
-        <view style={styles.line}/>
-        <FontAwesome5 name="check-circle" size={24} color="blue" /> */}
-
-        <StepIndicator/>
+        <Button
+          title="next"
+          onPress={nextStep}
+        />
+     
       </View>
     </View>
   )
