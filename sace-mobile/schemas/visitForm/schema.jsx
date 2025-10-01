@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 export const visitSchema = z.object({
+    //test
+    name: z.string().max(50, "O nome deve ter no máximo 50 caracteres").min(1, "Não pode ser vazio!"),
+
     //endereço
     idArea: z.enum(["Microregião A, Microregião B, Microregião C"]),
     estado: z.enum(["AL"]),

@@ -1,56 +1,75 @@
 import React from 'react'
 
-import {View, Text, StyleSheet, Button} from 'react-native'
-import FormTextInput from '../../components/forms/FormTextInput'
-import { useForm } from "react-hook-form";
+import {View, Text, StyleSheet, Button, TextInput} from 'react-native'
+import { Controller, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {visitSchema} from '../../schemas/visitForm/schema'
 
+import FormTextInput from '../../components/forms/FormTextInput'
+import Error from '../../components/forms/error'
+
 const visitSchemaAdress = visitSchema.pick({
-    idArea: true,
-    estado: true, 
-    municipio: true,
-    bairro: true,
-    logradouro: true,
+    name: true,
+    // idArea: true,
+    // estado: true, 
+    // municipio: true,
+    // bairro: true,
+    // logradouro: true,
     
-    //específicos
-    numeroImovel: true,
-    lado: true,
-    categoriaLocalidade: true,
-    tipoImovel: true,
-    status: true,
-    complemento: true,
+    // //específicos
+    // numeroImovel: true,
+    // lado: true,
+    // categoriaLocalidade: true,
+    // tipoImovel: true,
+    // status: true,
+    // complemento: true,
 });
 
 export default function Endereco() {
 
-   const form = useForm({
-    resolver: zodResolver(visitSchema),
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(visitSchemaAdress),
     defaultValues: {
-      idArea: "",
-      estado: "", 
-      municipio: "",
-      bairro: "",
-      logradouro: "",
+      name: "",
+      // idArea: "",
+      // estado: "", 
+      // municipio: "",
+      // bairro: "",
+      // logradouro: "",
       
-      //específicos
-      numeroImovel: "",
-      lado: "",
-      categoriaLocalidade: "",
-      tipoImovel: "",
-      status: "",
-      complemento: "",
-    }
+      // //específicos
+      // numeroImovel: "",
+      // lado: "",
+      // categoriaLocalidade: "",
+      // tipoImovel: "",
+      // status: "",
+      // complemento: "",
+    },
+  });
 
-   });
-
-    const onSubmit = (data) => {
-      console.log(data);
-    }
-
+  const onSubmit = (data) => {
+  console.log("dados:", data);
+  console.log("errors: ", errors.name);
+  };
 
   return (
+    <View>
+      <FormTextInput 
+        control = {control} 
+        name = "name"  
+        label = "name" 
+        placeholder= "Enter your name here"
+        schema = {visitSchemaAdress}
+        />
+      <Error error = {errors.name}/>
+      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+    </View>
+
     // <View>
     //      <View style={styles.container}>
     //       <Text>Endereço do imóvel</Text>
@@ -63,15 +82,16 @@ export default function Endereco() {
 }
 
 
-const styles = StyleSheet.create(
-    {
-        textInput:{
-            margin: 1,
-            backgroundColor: 'lightgray',
-            padding: 4
-        }
-    }
+// const styles = StyleSheet.create(
+//     {
+//         textInput:{
+//             margin: 1,
+//             backgroundColor: 'lightgray',
+//             padding: 4
+//         },
+
+//     }
 
 
-);
+// );
 
