@@ -13,7 +13,7 @@ export default function FormPickerInput({label, control, name, schema}) {
     const isRequired = !(fieldSchema instanceof z.ZodOptional);
 
   return (
-    <View>
+    <View style = {styles.container}>
         <Label isRequired = {isRequired}>{label}</Label>
         <Controller 
             control={control}
@@ -46,5 +46,10 @@ const styles = StyleSheet.create({
         borderRadius: 2,
         padding: 10,
         marginBottom: 4,
-    }
+    },
+
+
+    container: {
+          marginBlock: 8,
+    },
 });

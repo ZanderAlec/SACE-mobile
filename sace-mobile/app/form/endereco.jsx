@@ -14,18 +14,18 @@ import FormPickerInput from '../../components/forms/FormPickerInput'
 const visitSchemaAdress = visitSchema.pick({
     name: true,
     idArea: true,
-    // estado: true, 
-    // municipio: true,
-    // bairro: true,
-    // logradouro: true,
+    estado: true, 
+    municipio: true,
+    bairro: true,
+    logradouro: true,
     
-    // //específicos
-    // numeroImovel: true,
-    // lado: true,
-    // categoriaLocalidade: true,
-    // tipoImovel: true,
-    // status: true,
-    // complemento: true,
+    //específicos
+    numeroImovel: true,
+    lado: true,
+    categoriaLocalidade: true,
+    tipoImovel: true,
+    status: true,
+    complemento: true,
 });
 
 export default function Endereco() {
@@ -39,18 +39,18 @@ export default function Endereco() {
     defaultValues: {
       name: "",
       idArea: "",
-      // estado: "", 
-      // municipio: "",
-      // bairro: "",
-      // logradouro: "",
+      estado: "", 
+      municipio: "",
+      bairro: "",
+      logradouro: "",
       
-      // //específicos
-      // numeroImovel: "",
-      // lado: "",
-      // categoriaLocalidade: "",
-      // tipoImovel: "",
-      // status: "",
-      // complemento: "",
+      //específicos
+      numeroImovel: "",
+      lado: "",
+      categoriaLocalidade: "",
+      tipoImovel: "",
+      status: "",
+      complemento: "",
     },
   });
 
@@ -61,6 +61,8 @@ export default function Endereco() {
 
   return (
     <View>
+      <Text style = {styles.title}>Endereço do imóvel</Text>
+{/* 
       <FormTextInput 
         control = {control} 
         name = "name"  
@@ -68,7 +70,7 @@ export default function Endereco() {
         placeholder= "Enter your name here"
         schema = {visitSchemaAdress}
       />
-      <Error error = {errors.name}/>
+      <Error error = {errors.name}/> */}
 
       <FormPickerInput 
         label = "Identificador de área" 
@@ -77,6 +79,37 @@ export default function Endereco() {
         schema = {visitSchemaAdress}
       />
      
+     <View style={styles.flexRow}>
+
+        <FormPickerInput
+          label = "Estado"
+          name = "estado"
+          control={control}
+          schema={visitSchemaAdress}
+        />
+
+        <FormPickerInput
+          label = "Município"
+          name = "municipio"
+          control={control}
+          schema={visitSchemaAdress}
+        />
+     </View>
+
+     <FormPickerInput 
+        label = "Bairro" 
+        name = "bairro"
+        control = {control} 
+        schema = {visitSchemaAdress}
+      />
+
+     <FormTextInput 
+        control = {control} 
+        name = "logradouro"  
+        label = "Logradouro" 
+        placeholder= "Enter your name here"
+        schema = {visitSchemaAdress}
+      />
 
       
 
@@ -97,9 +130,17 @@ export default function Endereco() {
 
 const styles = StyleSheet.create(
     {
-        textInput:{
-            height: '50rem',
+        title: {
+          color: "#333153",
+          fontSize: 28,
+          fontWeight: 400,
+          marginBlock: 20,
         },
+
+        flexRow: {
+          flexDirection: 'row',
+          justifyContent: "space-between",
+        }
 
     }
 

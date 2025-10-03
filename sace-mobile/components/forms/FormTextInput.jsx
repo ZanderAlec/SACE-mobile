@@ -6,14 +6,14 @@ import {z} from 'zod'
 
 import Label from './label';
 
-export default function FormTextInput({schema, label, name, control, placeholder = "", style}) {
+export default function FormTextInput({schema, label, name, control, placeholder = "", style, disabled = false}) {
 
   const [focused, setFocused] = useState(false);
   const fieldSchema = schema.shape[name];
   const isRequired = !(fieldSchema instanceof z.ZodOptional);
 
   return (
-    <View>
+    <View style= {styles.container}>
       <Label isRequired = {isRequired} >{label}</Label>
       <Controller
         control={control}
@@ -50,6 +50,10 @@ const styles = StyleSheet.create(
         focusedInput:{
           outline: 2,
           outlineColor: '#3B67CE'
+        },
+
+        container: {
+          marginBlock: 8,
         },
 
     }
