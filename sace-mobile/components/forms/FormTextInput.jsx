@@ -4,7 +4,9 @@ import { TextInput,View, Text, StyleSheet } from "react-native";
 import { Controller } from "react-hook-form";
 import {z} from 'zod'
 
-export default function FormTextInput({schema, label, name, control, placeholder = "",}) {
+import Label from './label';
+
+export default function FormTextInput({schema, label, name, control, placeholder = "", style}) {
 
   const [focused, setFocused] = useState(false);
   const fieldSchema = schema.shape[name];
@@ -12,11 +14,7 @@ export default function FormTextInput({schema, label, name, control, placeholder
 
   return (
     <View>
-      <Text style= {styles.label}>
-        {label}
-        {isRequired && <Text style={styles.required}>*</Text>}
-        
-      </Text>
+      <Label isRequired = {isRequired} >{label}</Label>
       <Controller
         control={control}
         name={name}
@@ -24,7 +22,7 @@ export default function FormTextInput({schema, label, name, control, placeholder
         render={({field: {onChange, onBlur, value}}) => {
           return (
           <TextInput
-            style = {[styles.textInput, , focused && styles.focusedInput]}
+            style = {[styles.textInput, , focused && styles.focusedInput, style]}
             value={value}
             onChangeText={onChange}
             onFocus={() => setFocused(true)}
@@ -39,13 +37,6 @@ export default function FormTextInput({schema, label, name, control, placeholder
 
 const styles = StyleSheet.create(
     {
-      label:{
-        color: '#72777B',
-        fontSize: '14',
-        fontWeight: "700",
-        marginBottom: 2,
-      },
-
         textInput:{
             margin: 1,
             backgroundColor: '#DEE6F7',
@@ -60,11 +51,6 @@ const styles = StyleSheet.create(
           outline: 2,
           outlineColor: '#3B67CE'
         },
-
-        required:{
-          color: 'red',
-          paddingLeft: 4,
-        }
 
     }
 );

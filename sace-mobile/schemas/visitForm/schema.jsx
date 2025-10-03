@@ -5,10 +5,10 @@ export const visitSchema = z.object({
     name: z.string().max(50, "O nome deve ter no máximo 50 caracteres").min(1, "Não pode ser vazio!"),
 
     //endereço
-    idArea: z.enum(["Microregião A, Microregião B, Microregião C"]),
+    idArea: z.enum(["Microregião A", "Microregião B", "Microregião C"]),
     estado: z.enum(["AL"]),
     municipio: z.enum(["Maceió"]),
-    bairro: z.enum(["Ponta verde, Benedito Bentes, Tabuleiro"]),
+    bairro: z.enum(["Ponta verde", "Benedito Bentes", "Tabuleiro"]),
     logradouro: z.string().max(40),
     
     //específicos

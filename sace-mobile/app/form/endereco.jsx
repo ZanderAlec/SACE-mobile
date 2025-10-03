@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {View, Text, StyleSheet, Button, TextInput} from 'react-native'
 import { Controller, useForm } from "react-hook-form";
@@ -8,10 +8,12 @@ import {visitSchema} from '../../schemas/visitForm/schema'
 
 import FormTextInput from '../../components/forms/FormTextInput'
 import Error from '../../components/forms/error'
+import FormPickerInput from '../../components/forms/FormPickerInput'
+
 
 const visitSchemaAdress = visitSchema.pick({
     name: true,
-    // idArea: true,
+    idArea: true,
     // estado: true, 
     // municipio: true,
     // bairro: true,
@@ -36,7 +38,7 @@ export default function Endereco() {
     resolver: zodResolver(visitSchemaAdress),
     defaultValues: {
       name: "",
-      // idArea: "",
+      idArea: "",
       // estado: "", 
       // municipio: "",
       // bairro: "",
@@ -53,8 +55,8 @@ export default function Endereco() {
   });
 
   const onSubmit = (data) => {
-  console.log("dados:", data);
-  console.log("errors: ", errors.name);
+    console.log("dados:", data);
+    console.log("errors: ", errors.name);
   };
 
   return (
@@ -65,8 +67,19 @@ export default function Endereco() {
         label = "name" 
         placeholder= "Enter your name here"
         schema = {visitSchemaAdress}
-        />
+      />
       <Error error = {errors.name}/>
+
+      <FormPickerInput 
+        label = "Identificador de área" 
+        name = "idArea"
+        control = {control} 
+        schema = {visitSchemaAdress}
+      />
+     
+
+      
+
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>
 
@@ -82,16 +95,14 @@ export default function Endereco() {
 }
 
 
-// const styles = StyleSheet.create(
-//     {
-//         textInput:{
-//             margin: 1,
-//             backgroundColor: 'lightgray',
-//             padding: 4
-//         },
+const styles = StyleSheet.create(
+    {
+        textInput:{
+            height: '50rem',
+        },
 
-//     }
+    }
 
 
-// );
+);
 
