@@ -7,7 +7,7 @@ import z from 'zod';
 
 import Label from './label'
 
-export default function FormPickerInput({label, control, name, schema}) {
+export default function FormPickerInput({label, control, name, schema, disabled = false}) {
     const fieldSchema = schema.shape[name];
     const options = fieldSchema.options;
     const isRequired = !(fieldSchema instanceof z.ZodOptional);
@@ -21,9 +21,9 @@ export default function FormPickerInput({label, control, name, schema}) {
             render = {({field: {onChange, value}}) => (
                 <Picker 
                     selectedValue={value}
-                    style={styles.picker}
+                    style={[styles.picker, disabled ? styles.disabled : styles.active] }
                     onValueChange={(value) => onChange(value)}
-                    mode = "dialog"
+                    enabled = {!disabled}
                 >
                     <Picker.Item label="Selecione..." value="" />
                     {options.map((item, index) => (
@@ -40,9 +40,7 @@ export default function FormPickerInput({label, control, name, schema}) {
 const styles = StyleSheet.create({
     picker: {
         margin: 1,
-        backgroundColor: '#DEE6F7',
         borderWidth: 1,
-        borderColor: "#D7DEF7",
         borderRadius: 2,
         padding: 10,
         marginBottom: 4,
@@ -51,5 +49,17 @@ const styles = StyleSheet.create({
 
     container: {
           marginBlock: 8,
+          flex: 1,
     },
+
+    active: {
+        backgroundColor: '#DEE6F7',
+        borderColor: "#D7DEF7",
+    },
+
+    disabled: {
+        backgroundColor: "#E6E0E9",
+        borderColor: "#938F96",
+        color: "#938F96",
+    }
 });

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import {View, Text, StyleSheet, Button, TextInput} from 'react-native'
+import {View, Text, StyleSheet, Button, ScrollView} from 'react-native'
 import { Controller, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +9,8 @@ import {visitSchema} from '../../schemas/visitForm/schema'
 import FormTextInput from '../../components/forms/FormTextInput'
 import Error from '../../components/forms/error'
 import FormPickerInput from '../../components/forms/FormPickerInput'
-
+import Title from '../../components/text/Title'
+import Subtitle from '../../components/text/Subtitle'
 
 const visitSchemaAdress = visitSchema.pick({
     name: true,
@@ -60,23 +61,17 @@ export default function Endereco() {
   };
 
   return (
+  <View>
     <View>
-      <Text style = {styles.title}>Endereço do imóvel</Text>
-{/* 
-      <FormTextInput 
-        control = {control} 
-        name = "name"  
-        label = "name" 
-        placeholder= "Enter your name here"
-        schema = {visitSchemaAdress}
-      />
-      <Error error = {errors.name}/> */}
+
+      <Title>Endereço do imóvel</Title>
 
       <FormPickerInput 
         label = "Identificador de área" 
         name = "idArea"
         control = {control} 
         schema = {visitSchemaAdress}
+        disabled = {true}
       />
      
      <View style={styles.flexRow}>
@@ -86,6 +81,7 @@ export default function Endereco() {
           name = "estado"
           control={control}
           schema={visitSchemaAdress}
+          disabled = {true}
         />
 
         <FormPickerInput
@@ -93,6 +89,7 @@ export default function Endereco() {
           name = "municipio"
           control={control}
           schema={visitSchemaAdress}
+          disabled = {true}
         />
      </View>
 
@@ -101,6 +98,7 @@ export default function Endereco() {
         name = "bairro"
         control = {control} 
         schema = {visitSchemaAdress}
+        disabled = {true}
       />
 
      <FormTextInput 
@@ -109,37 +107,100 @@ export default function Endereco() {
         label = "Logradouro" 
         placeholder= "Enter your name here"
         schema = {visitSchemaAdress}
+        disabled = {true}
       />
 
+      <Subtitle>Preencha as informações específicas do imóvel: </Subtitle>
+
+      <View style={styles.flexRow}>
+        <View>
+          <FormTextInput 
+            control = {control} 
+            label = "Número do imóvel"
+            name = "numeroImovel"
+            schema={visitSchemaAdress}
+          />
+
+          <Error error = {errors.name}/> 
+
+        </View>
+
+        <View>
+          <FormPickerInput 
+            label = "Lado" 
+            name = "lado"
+            control = {control} 
+            schema = {visitSchemaAdress}
+          />
+
+          <Error error = {errors.name}/> 
+        </View>
+     </View>
+
+     <View style = {styles.flexRow}>
+
+        <View>
+          <FormPickerInput 
+            label = "Categoria da localidade" 
+            name = "categoriaLocalidade"
+            control = {control} 
+            schema = {visitSchemaAdress}
+          />
+
+          <Error error = {errors.name}/> 
+        </View>
+
+        <View>
+          <FormPickerInput 
+            label = "Tipo do imóvel" 
+            name = "tipoImovel"
+            control = {control} 
+            schema = {visitSchemaAdress}
+          />
+
+          <Error error = {errors.name}/> 
+        </View>
+
+     </View>
+
+      <FormPickerInput 
+          label = "Status" 
+          name = "status"
+          control = {control} 
+          schema = {visitSchemaAdress}
+      />
+
+      <Error error = {errors.name}/> 
+
+      <FormTextInput 
+        control = {control} 
+        label = "Complemento"
+        name = "complemento"
+        style={{height: '120px'}}
+        schema={visitSchemaAdress}
+        scrollEnabled={true}
+        multiline={true}     
+        height = {120}
+      />
+
+      <Error error = {errors.name}/> 
       
 
+      
+     
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>
-
-    // <View>
-    //      <View style={styles.container}>
-    //       <Text>Endereço do imóvel</Text>
-    //     </View>
-        
-    //     <Text>Name</Text>
-    //     <FormTextInput control = {control} rules ={{required: "Email is required"}} name = {"Name"} style={styles.textInput}/>
-    // </View>
+    </View>
   )
 }
 
 
 const styles = StyleSheet.create(
     {
-        title: {
-          color: "#333153",
-          fontSize: 28,
-          fontWeight: 400,
-          marginBlock: 20,
-        },
-
         flexRow: {
           flexDirection: 'row',
           justifyContent: "space-between",
+          gap: 2,
         }
 
     }

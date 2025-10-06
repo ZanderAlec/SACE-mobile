@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Button } from 'react-native'
+import { View, Text, StyleSheet, Button, ScrollView } from 'react-native'
 
 
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -9,6 +9,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import StepIndicator from '../form/stepIndicator'
 import Endereco from '../form/endereco'
 import SelecaoFormulario from '../form/selecaoFormulario'
+import Levantamento from '../form/levantamento'
 
 
 function Multi_Step_form() {
@@ -27,6 +28,10 @@ function Multi_Step_form() {
   }
 
   return (
+    <ScrollView 
+      contentContainerStyle={{ padding: 16 }}
+      keyboardShouldPersistTaps="handled"
+    >
     <View style={styles.bkgGray}>
       {/* <View style={styles.container}>
         <Text>
@@ -41,11 +46,11 @@ function Multi_Step_form() {
 
        <View style ={[styles.container, styles.bkgWhite]}>
         {
-          currStep === 0 ? 
-          <Endereco/>
+          // currStep === 0 ? 
+          // <Endereco/>
 
-          : currStep === 1 &&
-          <SelecaoFormulario/>
+          // : currStep === 1 &&
+          <Levantamento/>
         }
         
       </View>
@@ -64,6 +69,7 @@ function Multi_Step_form() {
      
       </View>
     </View>
+    </ScrollView>
   )
 }
 

@@ -5,8 +5,9 @@ import { Controller } from "react-hook-form";
 import {z} from 'zod'
 
 import Label from './label';
+import { config } from 'zod/v4/core';
 
-export default function FormTextInput({schema, label, name, control, placeholder = "", style, disabled = false}) {
+export default function FormTextInput({schema, label, name, control, placeholder = "", style, disabled = false, ...rest}) {
 
   const [focused, setFocused] = useState(false);
   const fieldSchema = schema.shape[name];
@@ -22,11 +23,13 @@ export default function FormTextInput({schema, label, name, control, placeholder
         render={({field: {onChange, onBlur, value}}) => {
           return (
           <TextInput
-            style = {[styles.textInput, , focused && styles.focusedInput, style]}
+            {...rest}
+            style = {[styles.textInput, style, disabled ? styles.disabled : styles.active , focused && styles.focusedInput]}
             value={value}
             onChangeText={onChange}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
+            editable = {!false}
           /> 
           )
         }}
@@ -38,13 +41,12 @@ export default function FormTextInput({schema, label, name, control, placeholder
 const styles = StyleSheet.create(
     {
         textInput:{
-            margin: 1,
-            backgroundColor: '#DEE6F7',
-            borderWidth: 1,
-            borderColor: "#D7DEF7",
-            borderRadius: 2,
-            padding: 10,
-            marginBottom: 4,
+          margin: 1,
+          borderWidth: 1,
+          borderRadius: 2,
+          padding: 10,
+          marginBottom: 4,
+         
         },
 
         focusedInput:{
@@ -54,7 +56,19 @@ const styles = StyleSheet.create(
 
         container: {
           marginBlock: 8,
+          flex: 1,
         },
+
+         active: {
+          backgroundColor: '#DEE6F7',
+          borderColor: "#D7DEF7",
+        },
+
+      disabled: {
+          backgroundColor: "#E6E0E9",
+          borderColor: "#938F96",
+          color: "#938F96",
+      }
 
     }
 );
