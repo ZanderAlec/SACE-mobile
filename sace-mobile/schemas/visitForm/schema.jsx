@@ -21,7 +21,15 @@ export const visitSchema = z.object({
 
     //Registro de controle da dengue
     atividadesRealizadas: z.enum(["LI - Levantamento de Índice", "PE - Ponto estratégico", "T - Tratamento", "DF - Delimitação de foco", "PVE - Pesquisa Vetorial Especial"]),
-    //Falta coisa aqui
+    quantDepositos: z.object({
+        armazenamentoElevado: z.number().min(0),
+        armazenamentoAguaSolo: z.number().min(0),
+        dispositivosMoveis: z.number().min(0),
+        dispositivosFixos: z.number().min(0),
+        pneus: z.number().min(0),
+        lixos: z.number().min(0),
+        naturais: z.number().min(0),
+    }),
 
     //Coleta de amostras
     quantTubitos: z.number(),
