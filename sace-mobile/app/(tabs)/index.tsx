@@ -10,6 +10,7 @@ import StepIndicator from '../form/stepIndicator'
 import Endereco from '../form/endereco'
 import SelecaoFormulario from '../form/selecaoFormulario'
 import Levantamento from '../form/levantamento'
+import ColetaAmostras from '../form/coletaAmostras'
 
 
 function Multi_Step_form() {
@@ -50,7 +51,8 @@ function Multi_Step_form() {
           // <Endereco/>
 
           // : currStep === 1 &&
-          <Levantamento/>
+          // <Levantamento/>
+          <ColetaAmostras/>
         }
         
       </View>

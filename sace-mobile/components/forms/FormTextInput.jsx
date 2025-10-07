@@ -7,7 +7,7 @@ import {z} from 'zod'
 import Label from './label';
 import { config } from 'zod/v4/core';
 
-export default function FormTextInput({schema, label, name, control, placeholder = "", style, disabled = false, ...rest}) {
+export default function FormTextInput({schema, label, subLabel, name, control, placeholder = "", style, disabled = false, ...rest}) {
 
   const [focused, setFocused] = useState(false);
   const fieldSchema = schema.shape[name];
@@ -15,7 +15,7 @@ export default function FormTextInput({schema, label, name, control, placeholder
 
   return (
     <View style= {styles.container}>
-      <Label isRequired = {isRequired} >{label}</Label>
+      <Label isRequired = {isRequired} subLabel = {subLabel}>{label}</Label>
       <Controller
         control={control}
         name={name}
@@ -46,6 +46,7 @@ const styles = StyleSheet.create(
           borderRadius: 2,
           padding: 10,
           marginBottom: 4,
+          flex: 1,
          
         },
 
@@ -56,7 +57,6 @@ const styles = StyleSheet.create(
 
         container: {
           marginBlock: 8,
-          flex: 1,
         },
 
          active: {

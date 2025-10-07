@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     title: {
         color: "#333153",
         fontSize: 28,
-        fontWeight: 400,
+        fontWeight: 600,
         marginBlock: 20,
     },
 });

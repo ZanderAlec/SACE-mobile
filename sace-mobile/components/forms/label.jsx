@@ -1,21 +1,29 @@
 import React from 'react'
-import { StyleSheet, Text } from 'react-native'
+import { StyleSheet, Text,View } from 'react-native'
+import SubLabel from './SubLabel'
 
 
-export default function Label({isRequired = false, children}) {
+export default function Label({isRequired = false, subLabel, children}) {
   return (
-    <Text style= {styles.label}>
+    <View>
+      <Text style= {styles.label}>
         {children}
         {isRequired && <Text style={styles.required}>*</Text>}
-    </Text>
+      </Text>
+
+      <SubLabel>
+        {subLabel}
+      </SubLabel>
+    </View>
+    
   )
 }
 
 const styles = StyleSheet.create({
     label:{
-    color: '#72777B',
+    color: '#333153',
     fontSize: '14',
-    fontWeight: "700",
+    fontWeight: "500",
     marginBottom: 2,
     },
 

@@ -111,6 +111,7 @@ export default function Endereco() {
       />
 
       <Subtitle>Preencha as informações específicas do imóvel: </Subtitle>
+      
 
       <View style={styles.flexRow}>
         <View>
