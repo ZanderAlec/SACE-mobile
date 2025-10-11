@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
 
-import {View, Text, StyleSheet, Button, ScrollView} from 'react-native'
-import { Controller, useForm } from "react-hook-form";
+import {View, StyleSheet, Button} from 'react-native'
+import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {visitSchema} from '../../schemas/visitForm/schema'
@@ -13,7 +12,6 @@ import Title from '../../components/text/Title'
 import Subtitle from '../../components/text/Subtitle'
 
 const visitSchemaAdress = visitSchema.pick({
-    name: true,
     idArea: true,
     estado: true, 
     municipio: true,
@@ -35,6 +33,7 @@ export default function Endereco() {
     control,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm({
     resolver: zodResolver(visitSchemaAdress),
     defaultValues: {
@@ -122,7 +121,7 @@ export default function Endereco() {
             schema={visitSchemaAdress}
           />
 
-          <Error error = {errors.name}/> 
+          <Error error = {errors.numeroImovel}/> 
 
         </View>
 
@@ -134,7 +133,7 @@ export default function Endereco() {
             schema = {visitSchemaAdress}
           />
 
-          <Error error = {errors.name}/> 
+          <Error error = {errors.lado}/> 
         </View>
      </View>
 
@@ -148,7 +147,7 @@ export default function Endereco() {
             schema = {visitSchemaAdress}
           />
 
-          <Error error = {errors.name}/> 
+          <Error error = {errors.categoriaLocalidade}/> 
         </View>
 
         <View>
@@ -159,7 +158,7 @@ export default function Endereco() {
             schema = {visitSchemaAdress}
           />
 
-          <Error error = {errors.name}/> 
+          <Error error = {errors.tipoImovel}/> 
         </View>
 
      </View>
@@ -171,7 +170,7 @@ export default function Endereco() {
           schema = {visitSchemaAdress}
       />
 
-      <Error error = {errors.name}/> 
+      <Error error = {errors.status}/> 
 
       <FormTextInput 
         control = {control} 
@@ -184,11 +183,8 @@ export default function Endereco() {
         height = {120}
       />
 
-      <Error error = {errors.name}/> 
-      
-
-      
-     
+      <Error error = {errors.complemento}/> 
+       
       <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>
     </View>

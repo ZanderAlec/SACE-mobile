@@ -1,23 +1,31 @@
 import { z } from 'zod';
 
-export const visitSchema = z.object({
-    //test
-    name: z.string().max(50, "O nome deve ter no máximo 50 caracteres").min(1, "Não pode ser vazio!"),
+const numberField = (invalid_type_error = "Valor deve ser um número.") => 
+     z.coerce.number({invalid_type_error: invalid_type_error}).optional();
 
+const numberFieldRequired = (required_error = "Não pode ser vazio!", invalid_type_error = "Valor deve ser um número.") => 
+    z.preprocess( (val) => (val === "" || val === null  ? undefined : Number(val)) , 
+        z.number({required_error: required_error, invalid_type_error: invalid_type_error})
+    );
+
+const enumField = (message = "Selecione um valor!") => {return {message: message}}
+
+export const visitSchema = z.object({
     //endereço
-    idArea: z.enum(["Microregião A", "Microregião B", "Microregião C"]),
-    estado: z.enum(["AL"]),
-    municipio: z.enum(["Maceió"]),
-    bairro: z.enum(["Ponta verde", "Benedito Bentes", "Tabuleiro"]),
+    idArea: z.enum(["Microregião A", "Microregião B", "Microregião C"], enumField()),
+    estado: z.enum(["AL"], enumField()),
+    municipio: z.enum(["Maceió"], enumField()),
+    bairro: z.enum(["Ponta verde", "Benedito Bentes", "Tabuleiro"], enumField()),
     logradouro: z.string().max(40),
     
     //específicos
-    numeroImovel: z.number(),
-    lado: z.enum(["ìmpar", "par"]),
-    categoriaLocalidade: z.enum(["Urbana", "Rural"]),
-    tipoImovel: z.enum(["Residencial"]),
-    status: z.enum(["Inspecionado", "Pendente"]),
-    complemento: z.string().max(50),
+    numeroImovel: numberFieldRequired(),
+
+    lado: z.enum(["ìmpar", "par"], enumField()),
+    categoriaLocalidade: z.enum(["Urbana", "Rural"], enumField()),
+    tipoImovel: z.enum(["Residencial"], enumField()),
+    status: z.enum(["Inspecionado", "Pendente"], enumField()),
+    complemento: z.string().max(50).optional(),
 
     //Registro de controle da dengue
     atividadesRealizadas: z.enum(["LI - Levantamento de Índice", "PE - Ponto estratégico", "T - Tratamento", "DF - Delimitação de foco", "PVE - Pesquisa Vetorial Especial"]),
@@ -41,8 +49,8 @@ export const visitSchema = z.object({
     }),
 
     //Coleta de amostras
-    numeroAmostra: z.string(),
-    quantTubitos: z.number(),
+    numeroAmostra: z.string().optional(),
+    quantTubitos: numberField(),
     
     //Tratamentos aplicados
     tipoLarvicida: z.string(),

@@ -1,12 +1,14 @@
 import React from 'react'
+import { useEffect } from 'react';
 
 import { visitSchema } from '@/schemas/visitForm/schema'
 import { zodResolver } from "@hookform/resolvers/zod";
-import {View } from 'react-native'
+import {View, Button } from 'react-native'
 import { useForm } from "react-hook-form";
 
 import FormTextInput from '@/components/forms/FormTextInput';
 import Title from '@/components/text/Title';
+import Error from '@/components/forms/error';
 
 const samplesSchema = visitSchema.pick({
     numeroAmostra: true,
@@ -19,6 +21,7 @@ function ColetaAmostras() {
         control,
         handleSubmit,
         formState: { errors },
+        watch
     } = useForm({
         resolver: zodResolver(samplesSchema),
         defaultValues: {
@@ -26,6 +29,16 @@ function ColetaAmostras() {
             quantTubitos: '',
         },
     });
+
+    useEffect(() => {
+        console.log(errors);
+    }, [errors]);
+
+
+    const onSubmit = (data) => {
+        console.log("dados:", data);
+        console.log("errors: ", errors.name);
+    };
 
   return (
     <View style={{ flexDirection: 'column' }}>
@@ -37,16 +50,23 @@ function ColetaAmostras() {
             label = "Digite o número da amostra:"
             name = "numeroAmostra"
             schema={samplesSchema}
-            subLabel={"Ex: AL-2025-032 \nAM  Sigla do estado;\n2025 → Ano da coleta;\n032 → Número sequencial da amostra dentro do ano."}
+            subLabel={"Ex: AL-2025-032 \nAL  Sigla do estado;\n2025 → Ano da coleta;\n032 → Número sequencial da amostra dentro do ano."}
         />
+        
+        <View>
+            <FormTextInput 
+                control = {control} 
+                label = "Digite a quantidade de tubitos:"
+                name = "quantTubitos"
+                schema={samplesSchema}
+                subLabel={"Quantidade de tubitos coletados com larvas/pupas."}
+            />
 
-        <FormTextInput 
-            control = {control} 
-            label = "Digite a quantidade de tubitos:"
-            name = "quantTubitos"
-            schema={samplesSchema}
-            subLabel={"Quantidade de tubitos coletados com larvas/pupas."}
-        />
+            <Error error={errors.quantTubitos}/>
+        </View>
+        
+
+        <Button title="Submit" onPress={handleSubmit(onSubmit)} />
     </View>
   )
 }

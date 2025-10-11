@@ -11,6 +11,7 @@ import Endereco from '../form/endereco'
 import SelecaoFormulario from '../form/selecaoFormulario'
 import Levantamento from '../form/levantamento'
 import ColetaAmostras from '../form/coletaAmostras'
+import Tratamentos from '../form/tratamentos'
 
 
 function Multi_Step_form() {
@@ -52,7 +53,8 @@ function Multi_Step_form() {
 
           // : currStep === 1 &&
           // <Levantamento/>
-          <ColetaAmostras/>
+          // <ColetaAmostras/>
+          <Tratamentos/>
         }
         
       </View>

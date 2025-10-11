@@ -19,17 +19,20 @@ export default function FormTextInput({schema, label, subLabel, name, control, p
       <Controller
         control={control}
         name={name}
-        placeholder = {placeholder}
         render={({field: {onChange, onBlur, value}}) => {
           return (
           <TextInput
             {...rest}
             style = {[styles.textInput, style, disabled ? styles.disabled : styles.active , focused && styles.focusedInput]}
             value={value}
+            placeholder = {placeholder}
             onChangeText={onChange}
             onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            editable = {!false}
+            onBlur={() => {
+              setFocused(false);
+              onBlur();
+            }}
+            editable = {!disabled}
           /> 
           )
         }}
@@ -51,8 +54,8 @@ const styles = StyleSheet.create(
         },
 
         focusedInput:{
-          outline: 2,
-          outlineColor: '#3B67CE'
+          borderColor: '#3B67CE',
+          borderWidth: 2,
         },
 
         container: {
