@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
         color: "#333153",
         fontSize: 28,
         fontWeight: 600,
-        marginBlock: 20,
+        // marginBlock: 12,
     },
 });
 

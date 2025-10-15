@@ -1,7 +1,7 @@
 import React from 'react'
 
 import {View, Text, StyleSheet, Button} from 'react-native'
-import { useForm, useWatch} from "react-hook-form";
+import { useForm, useWatch } from 'react-hook-form'
 
 
 import FormTitle from '../../components/text/FormTitle'

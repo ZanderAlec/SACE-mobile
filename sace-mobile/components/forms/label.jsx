@@ -22,7 +22,7 @@ export default function Label({isRequired = false, subLabel, children}) {
 const styles = StyleSheet.create({
     label:{
     color: '#333153',
-    fontSize: '14',
+    fontSize: 14,
     fontWeight: "500",
     marginBottom: 2,
     },

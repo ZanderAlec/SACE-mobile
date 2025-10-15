@@ -11,6 +11,9 @@ import FormPickerInput from '../../components/forms/FormPickerInput'
 import Title from '../../components/text/Title'
 import Subtitle from '../../components/text/Subtitle'
 
+import Divider from '@/components/general/Divider'
+
+
 const visitSchemaAdress = visitSchema.pick({
     idArea: true,
     estado: true, 
@@ -109,6 +112,8 @@ export default function Endereco() {
         disabled = {true}
       />
 
+      <Divider/>
+      
       <Subtitle>Preencha as informações específicas do imóvel: </Subtitle>
       
 

@@ -11,7 +11,8 @@ function Subtitle({children}) {
 const styles = StyleSheet.create({
      subtitle: {
         fontSize: 16,
-        color: '#333153'
+        color: '#333153',
+        marginBlock: 8,
     },
 });
 

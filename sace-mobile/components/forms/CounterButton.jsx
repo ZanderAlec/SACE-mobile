@@ -54,7 +54,7 @@ const styles = StyleSheet.create(
         paddingBlock: 6,
         paddingInline: 14,
         borderRadius: 8,
-        fontSize: '20',
+        fontSize: 20,
     },
 
     blueBttm:{

@@ -24,6 +24,7 @@ export default function FormTextInput({schema, label, subLabel, name, control, p
           <TextInput
             {...rest}
             style = {[styles.textInput, style, disabled ? styles.disabled : styles.active , focused && styles.focusedInput]}
+            placeholderTextColor="#72777B"
             value={value}
             placeholder = {placeholder}
             onChangeText={onChange}
@@ -59,7 +60,7 @@ const styles = StyleSheet.create(
         },
 
         container: {
-          marginBlock: 8,
+          // marginBlock: 4,
         },
 
          active: {

@@ -67,11 +67,18 @@ export const visitSchema = z.object({
     adulticida: treatmentObject(),
 
 
-    observacoes: z.string().max(50),
+    observacoes: z.string().max(100).optional(),
 
     //upload de arquivos
 
-    arquivo: z.string()
+    foto: z.object({
+      uri: z.string(),
+      name: z.string(),
+      type: z.string(),
+      size: z.number(),
+    }).refine(file => file.size <= 50 * 1024 * 1024, { 
+        message: "A imagem deve ter no máximo 5 MB"
+    })
 
 }); 
 

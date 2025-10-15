@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Button, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
 
 
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
+import Divider from '@/components/general/Divider'
 
 import StepIndicator from '../form/stepIndicator'
 import Endereco from '../form/endereco'
@@ -12,12 +13,25 @@ import SelecaoFormulario from '../form/selecaoFormulario'
 import Levantamento from '../form/levantamento'
 import ColetaAmostras from '../form/coletaAmostras'
 import Tratamentos from '../form/tratamentos'
+import Observacoes from '../form/Observacoes'
+import Upload from '../form/Upload'
+
 
 
 function Multi_Step_form() {
 
+  const formPages = [
+    <Endereco/>,
+    <Levantamento/>,
+    <ColetaAmostras/>,
+    <Tratamentos/>,
+    <Observacoes/>,
+    <Upload />
+  ]
+
   const [steps, setSteps] = useState(4);
   const [currStep, setCurrStep] = useState(0);
+
 
   const nextStep = () => {
     if (currStep + 1 < steps)
@@ -29,12 +43,13 @@ function Multi_Step_form() {
       setCurrStep(currStep-1);
   }
 
+
   return (
     <ScrollView 
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={{ padding: 16, backgroundColor: 'white' }}
       keyboardShouldPersistTaps="handled"
     >
-    <View style={styles.bkgGray}>
+    <View >
       {/* <View style={styles.container}>
         <Text>
           Agentes {">"}  Novo registro de campo
@@ -43,33 +58,30 @@ function Multi_Step_form() {
       
      
       <View style = {styles.indicatorContainer}>
-        <StepIndicator stepsNum={steps}  currStep={currStep}/>
+        {/* <StepIndicator stepsNum={steps}  currStep={currStep}/> */}
       </View>
 
        <View style ={[styles.container, styles.bkgWhite]}>
-        {
-          // currStep === 0 ? 
-          // <Endereco/>
-
-          // : currStep === 1 &&
-          // <Levantamento/>
-          // <ColetaAmostras/>
-          <Tratamentos/>
-        }
-        
+        {formPages[0]}
       </View>
 
-      <View>
-        <Button
-          title="Prev"
+      <Divider/>
+
+      <View style = {styles.flexRow}>
+        <Pressable
+          style = {[styles.bttm, styles.bttmActive]}
           onPress={prevStep}
-        />
+        >
+          <Text style ={styles.bttmText}>Prev</Text>
+        </Pressable>
 
 
-        <Button
-          title="next"
+        <Pressable
           onPress={nextStep}
-        />
+          style = {[styles.bttm, styles.bttmActive]}
+        >
+          <Text style ={styles.bttmText}>Next</Text>
+        </Pressable>
      
       </View>
     </View>
@@ -83,6 +95,7 @@ const styles = StyleSheet.create({
     borderBlockColor: 'red',
     padding: 10,
   },
+
 
   bkgGray:{
     backgroundColor: 'lightgray',
@@ -110,7 +123,33 @@ const styles = StyleSheet.create({
     backgroundColor: 'blue',
     margin: 3,
   },
- 
+  
+  flexRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    boxSizing: 'border-box',
+    gap: 16,
+  },
+
+  bttm: {
+    paddingBlock: 16,
+    flexGrow: 1,
+    alignItems: 'center',
+    borderRadius: 6,
+  },
+
+  bttmActive: {
+    backgroundColor: "#3B67CE",
+  },
+
+  bttmDisabled: {
+
+  },
+
+  bttmText: {
+    color: 'white',
+    fontSize: 16,
+  }
 
   
 });

@@ -28,7 +28,7 @@ function StepIndicator({stepsNum, currStep, CurrStepText = ""}) {
             
             {
             i != stepsNum &&
-             <view style={styles.activeLine}/>
+             <View style={styles.activeLine}/>
             }
 
             
