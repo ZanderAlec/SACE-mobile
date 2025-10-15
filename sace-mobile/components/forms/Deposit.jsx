@@ -1,54 +1,24 @@
-import React, { useState } from 'react'
+import React from 'react'
 
-import {View, Text, StyleSheet,Pressable, Image} from 'react-native'
+import {View, Text, StyleSheet, Image} from 'react-native'
 import { icons } from '../../constants/images'
-import { Controller } from 'react-hook-form';
+
+import CounterButton from './CounterButton';
 
 function Deposit({title, subtitle, iconType, control, name}) {    
   return (
+    <View style={styles.container}>
+        <Text style = {styles.title}>{title}</Text>
 
-    <Controller 
-        control = {control}
-        name = {name}
-        render = {({field: {value, onChange}}) => {
+        <Image source = {icons[iconType]}/>
+        <Text style = {styles.subtitle}>{subtitle}</Text>
 
-            const decrement = () => {
-                if (value > 0) 
-                    onChange(value - 1)
-            }
-            
-            const increment = () => {
-                onChange(value + 1);
-            }
-
-            const disabled = value == 0;
-
-            return (
-
-            <View style={styles.container}>
-                <Text style = {styles.title}>{title}</Text>
-
-                <Image source = {icons[iconType]}/>
-                <Text style = {styles.subtitle}>{subtitle}</Text>
-
-            <View style = {styles.flexRow}>
-                    <Pressable  disabled={disabled} onPress={decrement}>
-                        <Text style = {[styles.bttm, disabled ? styles.disabledBttm : styles.blueBttm]}>-</Text>
-                    </Pressable>
-
-                    <Pressable>
-                        <Text style = {[styles.bttm, styles.whiteBttm]}>{value}</Text>
-                    </Pressable>
-
-                    <Pressable onPress={increment}>
-                        <Text style = {[styles.bttm, styles.blueBttm]} >+</Text>
-                    </Pressable>
-            </View>
-            </View>
-            )
-            }}
-    />
-       
+        <CounterButton 
+            name = {name}
+            control = {control}
+        />
+    </View>
+    
   )
 }
 

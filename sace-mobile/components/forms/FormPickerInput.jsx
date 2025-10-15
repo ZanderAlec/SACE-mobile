@@ -7,14 +7,20 @@ import z from 'zod';
 
 import Label from './label'
 
-export default function FormPickerInput({label, control, name, schema, disabled = false}) {
-    const fieldSchema = schema.shape[name];
+export default function FormPickerInput({label, subLabel, control, name, schema, disabled = false}) {
+
+    const getNestedField = (schema, path) => {
+        return path.split('.').reduce((acc, key) => acc.shape[key], schema);
+    };
+
+    const fieldSchema = name.includes('.') ? getNestedField(schema, name) : schema.shape[name];
+
     const options = fieldSchema.options;
     const isRequired = !(fieldSchema instanceof z.ZodOptional);
 
   return (
     <View style = {styles.container}>
-        <Label isRequired = {isRequired}>{label}</Label>
+        <Label isRequired = {isRequired} subLabel={subLabel}>{label}</Label>
         <Controller 
             control={control}
             name = {name}

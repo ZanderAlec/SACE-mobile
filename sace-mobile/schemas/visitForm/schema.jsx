@@ -10,6 +10,13 @@ const numberFieldRequired = (required_error = "Não pode ser vazio!", invalid_ty
 
 const enumField = (message = "Selecione um valor!") => {return {message: message}}
 
+const treatmentObject = () => 
+    z.object({
+        tipo: z.enum(["Tipo A", "Tipo B", "Tipo C"]),
+        forma: z.enum(["Forma A", "Forma B", "Forma C"]),
+        quantidade: z.coerce.number(),
+    });
+
 export const visitSchema = z.object({
     //endereço
     idArea: z.enum(["Microregião A", "Microregião B", "Microregião C"], enumField()),
@@ -53,9 +60,13 @@ export const visitSchema = z.object({
     quantTubitos: numberField(),
     
     //Tratamentos aplicados
-    tipoLarvicida: z.string(),
-    formaLarvicida: z.string(),
-    quantidadeLarvicida: z.number(),
+    larvicida: treatmentObject(),
+    // tipoLarvicida: z.string(),
+    // formaLarvicida: z.string(),
+    // quantidadeLarvicida: z.numbr(),
+    adulticida: treatmentObject(),
+
+
     observacoes: z.string().max(50),
 
     //upload de arquivos
