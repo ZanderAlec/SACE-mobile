@@ -29,18 +29,20 @@ function Multi_Step_form() {
     <Upload />
   ]
 
-  const [steps, setSteps] = useState(4);
   const [currStep, setCurrStep] = useState(0);
 
-
   const nextStep = () => {
-    if (currStep + 1 < steps)
+    if (currStep + 1 < formPages.length)
       setCurrStep(currStep+1);
   }
 
   const prevStep = () => {
     if (currStep - 1 >= 0)
       setCurrStep(currStep-1);
+  }
+
+  const onSubmit = (data) => {
+    console.log(data);
   }
 
 
@@ -62,26 +64,43 @@ function Multi_Step_form() {
       </View>
 
        <View style ={[styles.container, styles.bkgWhite]}>
-        {formPages[0]}
+        {formPages[currStep]}
       </View>
 
       <Divider/>
 
-      <View style = {styles.flexRow}>
-        <Pressable
-          style = {[styles.bttm, styles.bttmActive]}
-          onPress={prevStep}
-        >
-          <Text style ={styles.bttmText}>Prev</Text>
-        </Pressable>
+      <View style = {[styles.flexRow, currStep !== 0 && {justifyContent: 'space-between'}]}>
+        
+        {
+          currStep !== 0 &&
+          <Pressable
+            style = {[styles.bttm, styles.bttmPrev]}
+            onPress={prevStep}
+          >
+            <Text style ={styles.bttmText}>Voltar</Text>
+          </Pressable>
+        }
 
 
-        <Pressable
-          onPress={nextStep}
-          style = {[styles.bttm, styles.bttmActive]}
-        >
-          <Text style ={styles.bttmText}>Next</Text>
-        </Pressable>
+        {
+          currStep === formPages.length - 1 ?
+
+          <Pressable
+            onPress={onSubmit}
+            style = {[styles.bttm, styles.bttmNext]}
+          >
+            <Text style ={styles.bttmText}>Finalizar Registro</Text>
+          </Pressable>
+
+        :
+
+          <Pressable
+            onPress={nextStep}
+            style = {[styles.bttm, styles.bttmNext]}
+          >
+            <Text style ={styles.bttmText}>Continuar</Text>
+          </Pressable>
+        }
      
       </View>
     </View>
@@ -126,7 +145,8 @@ const styles = StyleSheet.create({
   
   flexRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
     boxSizing: 'border-box',
     gap: 16,
   },
@@ -134,16 +154,21 @@ const styles = StyleSheet.create({
   bttm: {
     paddingBlock: 16,
     flexGrow: 1,
+    maxWidth: 140,
     alignItems: 'center',
     borderRadius: 6,
   },
 
-  bttmActive: {
+  bttmNext: {
+    backgroundColor: '#2AD947',
+  },
+
+  bttmPrev: {
     backgroundColor: "#3B67CE",
   },
 
   bttmDisabled: {
-
+    
   },
 
   bttmText: {
