@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {TouchableOpacity, Button, Text, View, StyleSheet} from 'react-native'
 import * as ImagePicker from 'expo-image-picker';
 import { useForm, Controller } from 'react-hook-form';
@@ -12,18 +12,21 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Title from '@/components/text/Title'
 import SubLabel from '@/components/forms/SubLabel';
 import Error from '@/components/forms/error';
+import UiButton from '@/components/general/UiButton';
 
 const uploadSchema = visitSchema.pick({
   foto:true,
 });
 
-function Upload() {
+function Upload({formHandler}) {
+  const {nextStep, prevStep, formData, saveFormData} = formHandler;
 
     const {
         control,
         handleSubmit,
         formState: { errors },
         trigger,
+        setValue
     } = useForm({
         resolver: zodResolver(uploadSchema),
         defaultValues: {
@@ -56,6 +59,25 @@ function Upload() {
         }
     }
 
+    useEffect(() => {
+      if (formData && formData['upload']) {
+        for(const field in formData['upload']) {
+          setValue(field, formData['upload'][field]);
+        }
+      }
+    }, [formData, setValue]);
+
+    const onSubmit = (data) => {
+        console.log("dados:", data);
+        console.log("errors: ", errors);
+        
+        if (Object.keys(errors).length === 0) {
+            // Save the validated data
+            saveFormData(data, 'upload');
+            nextStep();
+        }
+    };
+
   return (
     <View>
         <Title>Upload de arquivos</Title>
@@ -80,11 +102,35 @@ function Upload() {
         )}
       />
 
+      <View style={styles.flexRow}>
+        <UiButton
+          text="Voltar" 
+          onPress={handleSubmit(prevStep)} 
+          type="secondary" 
+          align="left"
+        />
+
+        <UiButton
+          text="Prosseguir" 
+          onPress={handleSubmit(onSubmit)} 
+          type="primary" 
+          align="right"
+        />
+      </View>
+
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+    flexRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        boxSizing: 'border-box',
+        flexWrap: 'wrap',
+        gap: 4,
+        marginBlock: 8,
+    },
     uploadBttm: {
         alignItems: 'center',
         borderStyle: 'dotted',

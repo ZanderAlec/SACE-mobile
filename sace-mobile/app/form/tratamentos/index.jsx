@@ -10,6 +10,7 @@ import { View, Button, StyleSheet } from 'react-native';
 
 import Title from '@/components/text/Title'
 import FormTitle from '@/components/text/FormTitle';
+import UiButton from '@/components/general/UiButton';
 
 const treatmentsSchema = visitSchema.pick({
         larvicida: true,
@@ -17,7 +18,8 @@ const treatmentsSchema = visitSchema.pick({
     });
 
 
-function Tratamentos() {
+function Tratamentos({formHandler}) {
+  const {nextStep, prevStep, formData, saveFormData} = formHandler;
 
 
     const [larvFormVisible, setLarvFormVisible] = useState(false);
@@ -27,6 +29,7 @@ function Tratamentos() {
         control,
         handleSubmit,
         formState: { errors },
+        setValue
     } = useForm({
         resolver: zodResolver(treatmentsSchema),
         defaultValues: {
@@ -48,9 +51,23 @@ function Tratamentos() {
        console.log(errors)
     }, [errors]);
 
+    useEffect(() => {
+      if (formData && formData['tratamentos']) {
+        for(const field in formData['tratamentos']) {
+          setValue(field, formData['tratamentos'][field]);
+        }
+      }
+    }, [formData, setValue]);
+
     const onSubmit = (data) => {
         console.log("dados:", data);
-        // console.log("errors: ", errors);
+        console.log("errors: ", errors);
+        
+        if (Object.keys(errors).length === 0) {
+            // Save the validated data
+            saveFormData(data, 'tratamentos');
+            nextStep();
+        }
     };
  
     
@@ -93,7 +110,21 @@ function Tratamentos() {
         }
       
 
-        <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+        <View style={styles.flexRow}>
+          <UiButton
+            text="Voltar" 
+            onPress={handleSubmit(prevStep)} 
+            type="secondary" 
+            align="left"
+          />
+
+          <UiButton
+            text="Prosseguir" 
+            onPress={handleSubmit(onSubmit)} 
+            type="primary" 
+            align="right"
+          />
+        </View>
     </View>
   )
 }

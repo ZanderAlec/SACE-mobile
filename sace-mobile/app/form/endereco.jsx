@@ -12,6 +12,9 @@ import Title from '../../components/text/Title'
 import Subtitle from '../../components/text/Subtitle'
 
 import Divider from '@/components/general/Divider'
+import UiButton from '@/components/general/UiButton'
+
+import { useEffect } from 'react';
 
 
 const visitSchemaAdress = visitSchema.pick({
@@ -30,22 +33,23 @@ const visitSchemaAdress = visitSchema.pick({
     complemento: true,
 });
 
-export default function Endereco() {
+export default function Endereco({formHandler}) {
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
+    setValue
   } = useForm({
     resolver: zodResolver(visitSchemaAdress),
     defaultValues: {
-      name: "",
-      idArea: "",
-      estado: "", 
-      municipio: "",
-      bairro: "",
-      logradouro: "",
+      name: "João Silva",
+      idArea: 'Microregião A',
+      estado: 'AL', 
+      municipio: 'Maceió',
+      bairro: 'Ponta verde',
+      logradouro: 'Rua das Flores',
       
       //específicos
       numeroImovel: "",
@@ -57,9 +61,31 @@ export default function Endereco() {
     },
   });
 
+  const {nextStep, prevStep, formData, saveFormData} = formHandler;
+  
+  useEffect(() => {
+    if (formData && formData['endereco']) {
+      for(const field in formData['endereco']) {
+        setValue(field, formData['endereco'][field]);
+      }
+    }
+  }, [formData, setValue]);
+
+
+
+  useEffect(() => {
+    setValue("idArea", 'Microregião A');
+    setValue("estado", 'AL');
+    setValue("municipio", 'Maceió');
+    setValue("bairro", 'Ponta verde');
+    setValue("logradouro", 'Rua das Flores');
+  }, [setValue]);
+
   const onSubmit = (data) => {
-    console.log("dados:", data);
-    console.log("errors: ", errors.name);
+    if (Object.keys(errors).length === 0) {
+      saveFormData(data, 'endereco');
+      nextStep();
+    }
   };
 
   return (
@@ -190,7 +216,22 @@ export default function Endereco() {
 
       <Error error = {errors.complemento}/> 
        
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+      <View style={styles.flexRow}>
+        <UiButton
+          text="Voltar" 
+          onPress={handleSubmit(prevStep)} 
+          type="secondary" 
+          align="left"
+        />
+
+        <UiButton
+          text="Prosseguir" 
+          onPress={handleSubmit(onSubmit)} 
+          type="primary" 
+          align="right"
+        />
+      </View>
+
     </View>
     </View>
   )

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect }	 from 'react'
 
 import {View, Text, StyleSheet, Button} from 'react-native'
 import { useForm, useWatch } from 'react-hook-form'
@@ -15,16 +15,19 @@ import Link from '../../components/text/Link'
 import { visitSchema } from '@/schemas/visitForm/schema'
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import UiButton from '@/components/general/UiButton'
+
 const settingSchema = visitSchema.pick({
   atividadesRealizadas: true,
   quantDepositos: true,
 });
 
 
-function Levantamento() {
+function Levantamento({formHandler}) {
    const {
       control,
       handleSubmit,
+      setValue,
       formState: { errors },
     } = useForm({
       resolver: zodResolver(settingSchema),
@@ -62,10 +65,27 @@ function Levantamento() {
     },
   });
 
+  const {nextStep, prevStep, formData, saveFormData} = formHandler;
+
+  useEffect(() => {
+    if (formData && formData['levantamento']) {
+      for(const field in formData['levantamento']) {
+        setValue(field, formData['levantamento'][field]);
+      }
+    }
+  }, [formData, setValue]);
+
   const onSubmit = (data) => {
     console.log("dados:", data);
     console.log("errors: ", errors);
+    
+    if (Object.keys(errors).length === 0) {
+      saveFormData(data, 'levantamento');
+      nextStep();
+    }
   };
+
+
 
   const totalDeposits = () => {
     return Object.values(totalquantDeposits).reduce((acc, value) => acc + value, 0);
@@ -176,20 +196,28 @@ function Levantamento() {
         
         <Subtitle>Número total de depósitos: <Text style={{fontWeight: 500}}>{totalDeposits()}</Text></Subtitle>
 
-        <Button title="Submit" onPress={handleSubmit(onSubmit)} />
-        
+        <View style={styles.flexRow}>
+          <UiButton
+            text="Voltar" 
+            onPress={handleSubmit(prevStep)} 
+            type="secondary" 
+            align="left"
+          />
+
+          <UiButton
+            text="Prosseguir" 
+            onPress={handleSubmit(onSubmit)} 
+            type="primary" 
+            align="right"
+          />
+
+        </View>
+      
    </View>
   )
 }
 
 const styles = StyleSheet.create({
-    formTitle: {
-        color: "#3B67CE",
-        fontSize: 28,
-        textAlign: 'center',
-        fontWeight: '500',
-    },
-
     flexRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',

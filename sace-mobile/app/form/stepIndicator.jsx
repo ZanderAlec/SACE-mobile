@@ -2,7 +2,7 @@ import React from 'react'
 import {View, Text, StyleSheet} from 'react-native'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
-function StepIndicator({stepsNum, currStep, CurrStepText = ""}) {
+function StepIndicator({stepsNum, currStep, stepsTextList = []}) {
 
   const stepIndicatorRenderer = () => {
     const indicators = [];
@@ -32,21 +32,28 @@ function StepIndicator({stepsNum, currStep, CurrStepText = ""}) {
             }
 
             
-            {/* {i == currStep &&  <Text style={styles.curStepText}>{CurrStepText}</Text>} */}
         </View>
       );
     }
 
-    return <View style={styles.indicatorContainer}>{indicators} </View>
+    return <View style={styles.indicatorContainer}><Text>{indicators} </Text></View>
   }
 
   return (
-    <div>{stepIndicatorRenderer()}</div>
+    <View style={styles.container}>
+      <Text style={styles.stepText}>{stepsTextList[currStep]}</Text>
+      {stepIndicatorRenderer()}
+    </View>
   )
 }
 
 
 const styles = StyleSheet.create({
+
+  container:{
+    marginBottom: 16
+  },
+
     indicatorContainer:{
         flexDirection: 'row',
         alignItems: 'center',
@@ -79,15 +86,11 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 
-  curStepText:{
-    position: 'absolute',
-    top: '120%',
-    textAlign: "center",
-    display: 'inline',
-    paddingHorizontal: 6, // deixa respirar
-    paddingVertical: 2,
-    borderRadius: 4,
-
+  stepText:{
+    color: "#333153",
+    fontSize: 16,
+    fontWeight: 500,
+    marginBlock: 8,
   }
  
 });

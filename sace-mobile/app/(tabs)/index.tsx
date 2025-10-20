@@ -20,19 +20,14 @@ import Upload from '../form/Upload'
 
 function Multi_Step_form() {
 
-  const formPages = [
-    <Endereco/>,
-    <Levantamento/>,
-    <ColetaAmostras/>,
-    <Tratamentos/>,
-    <Observacoes/>,
-    <Upload />
-  ]
-
   const [currStep, setCurrStep] = useState(0);
+  const [formData, setFormData] = useState({});
+  
+  // Define the number of steps as a constant
+  const TOTAL_STEPS = 6;
 
   const nextStep = () => {
-    if (currStep + 1 < formPages.length)
+    if (currStep + 1 < TOTAL_STEPS)
       setCurrStep(currStep+1);
   }
 
@@ -41,10 +36,44 @@ function Multi_Step_form() {
       setCurrStep(currStep-1);
   }
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = (data: any) => {
+    console.log("Final form data:", data);
+    // Here you can save to database, send to API, etc.
   }
 
+  const saveFormData = (stepData: any, stepName: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [stepName]: stepData
+    }));
+    console.log(`Saved data for step ${stepName}:`, stepData);
+    console.log("All form data so far:", { ...formData, [stepName]: stepData });
+  }
+
+  const formHandler = {
+    nextStep,
+    prevStep,
+    formData,
+    saveFormData
+  }
+
+  const formPages = [
+    <Endereco formHandler={formHandler}/>,
+    <Levantamento formHandler={formHandler}/>,
+    <ColetaAmostras formHandler={formHandler}/>,
+    <Tratamentos formHandler={formHandler}/>,
+    <Observacoes formHandler={formHandler}/>,
+    <Upload formHandler={formHandler}/>
+  ]
+
+  const stepsTextList: string[] = [
+    "Endere. do imóvel", 
+    "Lev. Informações", 
+    "Coleta de amostras", 
+    "Tratam. Aplicados", 
+    "Observações", 
+    "Upload de arquivos"
+  ]
 
   return (
     <ScrollView 
@@ -60,7 +89,7 @@ function Multi_Step_form() {
       
      
       <View style = {styles.indicatorContainer}>
-        {/* <StepIndicator stepsNum={steps}  currStep={currStep}/> */}
+        <StepIndicator stepsNum={TOTAL_STEPS}  currStep={currStep} stepsTextList={stepsTextList}/>
       </View>
 
        <View style ={[styles.container, styles.bkgWhite]}>
@@ -70,38 +99,7 @@ function Multi_Step_form() {
       <Divider/>
 
       <View style = {[styles.flexRow, currStep !== 0 && {justifyContent: 'space-between'}]}>
-        
-        {
-          currStep !== 0 &&
-          <Pressable
-            style = {[styles.bttm, styles.bttmPrev]}
-            onPress={prevStep}
-          >
-            <Text style ={styles.bttmText}>Voltar</Text>
-          </Pressable>
-        }
 
-
-        {
-          currStep === formPages.length - 1 ?
-
-          <Pressable
-            onPress={onSubmit}
-            style = {[styles.bttm, styles.bttmNext]}
-          >
-            <Text style ={styles.bttmText}>Finalizar Registro</Text>
-          </Pressable>
-
-        :
-
-          <Pressable
-            onPress={nextStep}
-            style = {[styles.bttm, styles.bttmNext]}
-          >
-            <Text style ={styles.bttmText}>Continuar</Text>
-          </Pressable>
-        }
-     
       </View>
     </View>
     </ScrollView>
