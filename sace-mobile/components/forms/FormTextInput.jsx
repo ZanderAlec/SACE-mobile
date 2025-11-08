@@ -5,13 +5,21 @@ import { Controller } from "react-hook-form";
 import {z} from 'zod'
 
 import Label from './label';
+import Error from './error';
 import { config } from 'zod/v4/core';
 
-export default function FormTextInput({schema, label, subLabel, name, control, placeholder = "", style, disabled = false, ...rest}) {
+export default function FormTextInput({schema, label, subLabel, name, control, placeholder = "", style, disabled = false, errors, ...rest}) {
 
   const [focused, setFocused] = useState(false);
   const fieldSchema = schema.shape[name];
   const isRequired = !(fieldSchema instanceof z.ZodOptional);
+
+  const getNestedError = (errors, path) => {
+    if (!errors || !path) return null;
+    return path.split('.').reduce((acc, key) => acc?.[key], errors);
+  };
+
+  const fieldError = getNestedError(errors, name);
 
   return (
     <View style= {styles.container}>
@@ -23,7 +31,7 @@ export default function FormTextInput({schema, label, subLabel, name, control, p
           return (
           <TextInput
             {...rest}
-            style = {[styles.textInput, style, disabled ? styles.disabled : styles.active , focused && styles.focusedInput]}
+            style = {[styles.textInput, style, disabled ? styles.disabled : styles.active , focused && styles.focusedInput, fieldError && styles.errorBorder]}
             placeholderTextColor="#72777B"
             value={value}
             placeholder = {placeholder}
@@ -34,10 +42,12 @@ export default function FormTextInput({schema, label, subLabel, name, control, p
               onBlur();
             }}
             editable = {!disabled}
+            secureTextEntry={rest.secureTextEntry}
           /> 
           )
         }}
       />
+      <Error error={fieldError} />
     </View>
   )
 }
@@ -49,8 +59,8 @@ const styles = StyleSheet.create(
           borderWidth: 1,
           borderRadius: 2,
           padding: 10,
-          marginBottom: 4,
-          flex: 1,
+          paddingBlock: 20,
+          // marginBottom: 4,
          
         },
 
@@ -61,6 +71,7 @@ const styles = StyleSheet.create(
 
         container: {
           // marginBlock: 4,
+          flex: 1,
         },
 
          active: {
@@ -70,8 +81,13 @@ const styles = StyleSheet.create(
 
       disabled: {
           backgroundColor: "#E6E0E9",
-          borderColor: "#938F96",
+          borderColor: "#E6E0E9",
           color: "#938F96",
+      },
+
+      errorBorder: {
+        borderColor: '#ED1B24',
+        borderWidth: 1,
       }
 
     }

@@ -8,20 +8,28 @@ import { useForm } from "react-hook-form";
 
 import FormTextInput from '@/components/forms/FormTextInput';
 import Title from '@/components/text/Title';
-import Error from '@/components/forms/error';
 import UiButton from '@/components/general/UiButton';
 
 const samplesSchema = visitSchema.pick({
     coletaAmostras: true,
 });
 
-function ColetaAmostras({formHandler}) {
+function ColetaAmostras({formHandler, register, isEditing = false}) {
+  console.log('Register in ColetaAmostras:', register);
+
+  const {
+    numero_da_amostra,
+    quantiade_tubitos,
+  } = register || {};
+
+  const disabled = !isEditing;
 
     const {
         control,
         handleSubmit,
         formState: { errors },
         setValue,
+        reset,
         watch
     } = useForm({
         resolver: zodResolver(samplesSchema),
@@ -43,6 +51,18 @@ function ColetaAmostras({formHandler}) {
       }
     }, [formData, setValue]);
 
+    useEffect(() => {
+      if (register) {
+        const values = {
+          coletaAmostras: {
+            numeroAmostras: numero_da_amostra || '',
+            quantTubitos: quantiade_tubitos ? String(quantiade_tubitos) : '',
+          }
+        };
+        reset(values);
+      }
+    }, [register, numero_da_amostra, quantiade_tubitos, reset]);
+
     const onSubmit = (data) => {
         console.log("dados:", data);
         console.log("errors: ", errors);
@@ -51,7 +71,9 @@ function ColetaAmostras({formHandler}) {
             saveFormData(data.coletaAmostras, 'coletaAmostras');
             nextStep();
         }
-    };
+    };  
+
+    // console.log(errors.coletaAmostras);
 
   return (
     <View style={{ flexDirection: 'column' }}>
@@ -64,9 +86,9 @@ function ColetaAmostras({formHandler}) {
             name = "coletaAmostras.numeroAmostras"
             schema={samplesSchema}
             subLabel={"Ex: AL-2025-032 \nAL  Sigla do estado;\n2025 → Ano da coleta;\n032 → Número sequencial da amostra dentro do ano."}
+            errors = {errors}
+            disabled={disabled}
         />
-
-        <Error error={errors.coletaAmostras?.numeroAmostras}/>
 
         <View>
             <FormTextInput 
@@ -75,9 +97,9 @@ function ColetaAmostras({formHandler}) {
                 name = "coletaAmostras.quantTubitos"
                 schema={samplesSchema}
                 subLabel={"Quantidade de tubitos coletados com larvas/pupas."}
+                errors = {errors}
+                disabled={disabled}
             />
-
-            <Error error={errors.coletaAmostras?.quantTubitos}/>
         </View>
         
 

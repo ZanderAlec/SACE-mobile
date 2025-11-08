@@ -11,18 +11,18 @@ const enumField = (message = "Selecione um valor!") => {return {message: message
 
 const treatmentObject = () => 
     z.object({
-        tipo: z.enum(["Tipo A", "Tipo B", "Tipo C"]),
-        forma: z.enum(["Forma A", "Forma B", "Forma C"]),
+        tipo: z.enum(["Tipo A", "Tipo B", "Tipo C"], {message: "Selecione um valor!"}),
+        forma: z.enum(["Forma A", "Forma B", "Forma C"], {message: "Selecione um valor!"}),
         quantidade: z.coerce.number(),
     });
 
 export const visitSchema = z.object({
     //endereço
-    idArea: z.enum(["Microregião A", "Microregião B", "Microregião C"], enumField()),
-    estado: z.enum(["AL"], enumField()),
-    municipio: z.enum(["Maceió"], enumField()),
-    bairro: z.enum(["Ponta verde", "Benedito Bentes", "Tabuleiro"], enumField()),
-    logradouro: z.string().max(40),
+    idArea: z.string().min(1, { message: 'Não pode ser vazio!' }),
+    estado: z.string().min(1, { message: 'Não pode ser vazio!' }),
+    municipio: z.string().min(1, { message: 'Não pode ser vazio!' }),
+    bairro: z.string().min(1, { message: 'Não pode ser vazio!' }),
+    logradouro: z.string().min(1, { message: 'Não pode ser vazio!' }).max(40),
     
     //específicos
     numeroImovel:   z.string()
@@ -31,7 +31,7 @@ export const visitSchema = z.object({
 
     lado: z.enum(["ìmpar", "par"], enumField()),
     categoriaLocalidade: z.enum(["Urbana", "Rural"], enumField()),
-    tipoImovel: z.enum(["Residencial"], enumField()),
+    tipoImovel: z.enum(["Residência"], enumField()),
     status: z.enum(["Inspecionado", "Pendente"], enumField()),
     complemento: z.string().max(50).optional(),
 

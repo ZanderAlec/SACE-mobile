@@ -18,7 +18,16 @@ const treatmentsSchema = visitSchema.pick({
     });
 
 
-function Tratamentos({formHandler}) {
+function Tratamentos({formHandler, register, isEditing = false}) {
+  console.log('Register in Tratamentos:', register);
+
+  const {
+    larvicidas,
+    adulticidas,
+  } = register || {};
+
+  const disabled = !isEditing;
+
   const {nextStep, prevStep, formData, saveFormData} = formHandler;
 
 
@@ -29,7 +38,8 @@ function Tratamentos({formHandler}) {
         control,
         handleSubmit,
         formState: { errors },
-        setValue
+        setValue,
+        reset
     } = useForm({
         resolver: zodResolver(treatmentsSchema),
         defaultValues: {
@@ -58,6 +68,45 @@ function Tratamentos({formHandler}) {
         }
       }
     }, [formData, setValue]);
+
+    useEffect(() => {
+      if (register) {
+        const values = {
+          larvicida: {
+            tipo: '',
+            forma: '',
+            quantidade: 0
+          },
+          adulticida: {
+            tipo: '',
+            forma: '',
+            quantidade: 0
+          }
+        };
+        
+        // Set larvicida from first item in larvicidas array
+        if (larvicidas && larvicidas.length > 0) {
+          const larvicida = larvicidas[0];
+          console.log('Setting larvicida:', larvicida);
+          setLarvFormVisible(true);
+          if (larvicida.tipo) values.larvicida.tipo = larvicida.tipo;
+          if (larvicida.forma) values.larvicida.forma = larvicida.forma;
+          if (typeof larvicida.quantidade === 'number') values.larvicida.quantidade = larvicida.quantidade;
+        }
+
+        // Set adulticida from first item in adulticidas array
+        if (adulticidas && adulticidas.length > 0) {
+          const adulticida = adulticidas[0];
+          console.log('Setting adulticida:', adulticida);
+          setAdultFormVisible(true);
+          if (adulticida.tipo) values.adulticida.tipo = adulticida.tipo;
+          if (adulticida.forma) values.adulticida.forma = adulticida.forma;
+          if (typeof adulticida.quantidade === 'number') values.adulticida.quantidade = adulticida.quantidade;
+        }
+        
+        reset(values);
+      }
+    }, [register, larvicidas, adulticidas, reset]);
 
     const onSubmit = (data) => {
         console.log("dados:", data);
@@ -88,6 +137,8 @@ function Tratamentos({formHandler}) {
                 control = {control}
                 schema = {treatmentsSchema}
                 baseName={`larvicida`}
+                errors = {errors}
+                disabled={disabled}
             />
         }
         
@@ -106,6 +157,8 @@ function Tratamentos({formHandler}) {
             control = {control}
             schema = {treatmentsSchema}
             baseName={`adulticida`}
+            errors = {errors}
+            disabled={disabled}
             />
         }
       

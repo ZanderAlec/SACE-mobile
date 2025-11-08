@@ -5,7 +5,7 @@ import Checkbox from "expo-checkbox";
 import { Controller } from 'react-hook-form';
 
  
-function CheckBox({control, name, label}) {
+function CheckBox({control, name, label, disabled = false}) {
 
 
   return (
@@ -22,9 +22,10 @@ function CheckBox({control, name, label}) {
                 value = {value} 
                 onValueChange={onChange}
                 color={isChecked ? "#007bff" : undefined}
+                disabled={disabled}
               />
 
-              <Text style = {[styles.text, isChecked && styles.checkedText] }>{label}</Text>
+              <Text style = {[styles.text, isChecked && styles.checkedText, disabled && styles.disabledText] }>{label}</Text>
             </View>
           )
         }}
@@ -49,6 +50,10 @@ const styles = StyleSheet.create({
 
   checkedText: {
     fontWeight: 700,
+  },
+
+  disabledText: {
+    opacity: 0.6,
   },  
 });
 

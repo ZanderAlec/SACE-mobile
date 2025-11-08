@@ -10,10 +10,12 @@ export default function Label({isRequired = false, subLabel, children}) {
         {children}
         {isRequired && <Text style={styles.required}>*</Text>}
       </Text>
-
-      <SubLabel>
-        {subLabel}
-      </SubLabel>
+    
+      {subLabel && (
+        <SubLabel>
+          {subLabel}
+        </SubLabel>
+      )}
     </View>
     
   )

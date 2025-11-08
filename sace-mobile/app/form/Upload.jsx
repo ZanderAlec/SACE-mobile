@@ -18,7 +18,15 @@ const uploadSchema = visitSchema.pick({
   foto:true,
 });
 
-function Upload({formHandler}) {
+function Upload({formHandler, register, isEditing = false}) {
+  console.log('Register in Upload:', register);
+
+  const {
+    arquivos,
+  } = register || {};
+
+  const disabled = !isEditing;
+
   const {nextStep, prevStep, formData, saveFormData} = formHandler;
 
     const {
@@ -26,7 +34,8 @@ function Upload({formHandler}) {
         handleSubmit,
         formState: { errors },
         trigger,
-        setValue
+        setValue,
+        reset
     } = useForm({
         resolver: zodResolver(uploadSchema),
         defaultValues: {
@@ -67,14 +76,37 @@ function Upload({formHandler}) {
       }
     }, [formData, setValue]);
 
-    const onSubmit = (data) => {
+    useEffect(() => {
+      if (register && arquivos && arquivos.length > 0) {
+        // Set foto from first item in arquivos array
+        const arquivo = arquivos[0];
+        if (arquivo.uri || arquivo.url) {
+          reset({
+            foto: {
+              uri: arquivo.uri || arquivo.url,
+              name: arquivo.name || arquivo.filename || arquivo.uri?.split('/').pop() || arquivo.url?.split('/').pop(),
+              type: arquivo.type || 'image/jpeg',
+              size: arquivo.size || 0
+            }
+          });
+        }
+      }
+    }, [register, arquivos, reset]);
+
+    const onSubmit = async (data) => {
         console.log("dados:", data);
         console.log("errors: ", errors);
         
         if (Object.keys(errors).length === 0) {
             // Save the validated data
             saveFormData(data, 'upload');
-            nextStep();
+            
+            // Call the submit function from formHandler
+            if (formHandler.onSubmit) {
+                await formHandler.onSubmit(data);
+            } else {
+                nextStep();
+            }
         }
     };
 
@@ -88,11 +120,11 @@ function Upload({formHandler}) {
         render={({ field}) => (
             <>
                 <SubLabel>Selecione fotos, vídeos ou documentos que complementem o registro de campo:</SubLabel>
-                <TouchableOpacity onPress={() => pickImage(field.onChange)}>
-                        <View style = {styles.uploadBttm}>
-                            <AntDesign name="upload" size={48} color="#72777B" />
-                            <Text style = {styles.uploadTxt}>Clique aqui para escolher um arquivo.</Text>
-                            <Text style = {styles.uploadSubTxt}>jpeg, png - máx. 50MB</Text>
+                <TouchableOpacity onPress={() => !disabled && pickImage(field.onChange)} disabled={disabled}>
+                        <View style = {[styles.uploadBttm, disabled && styles.disabledUpload]}>
+                            <AntDesign name="upload" size={48} color={disabled ? "#938F96" : "#72777B"} />
+                            <Text style = {[styles.uploadTxt, disabled && styles.disabledText]}>Clique aqui para escolher um arquivo.</Text>
+                            <Text style = {[styles.uploadSubTxt, disabled && styles.disabledText]}>jpeg, png - máx. 50MB</Text>
                         </View>
                 </TouchableOpacity>
 
@@ -108,13 +140,15 @@ function Upload({formHandler}) {
           onPress={handleSubmit(prevStep)} 
           type="secondary" 
           align="left"
+          disabled={formHandler.isSubmitting}
         />
 
         <UiButton
-          text="Prosseguir" 
+          text={formHandler.isSubmitting ? "Enviando..." : "Finalizar"} 
           onPress={handleSubmit(onSubmit)} 
           type="primary" 
           align="right"
+          disabled={formHandler.isSubmitting}
         />
       </View>
 
@@ -150,6 +184,15 @@ const styles = StyleSheet.create({
     uploadSubTxt:{
         color: '#72777B',
         fontSize: 16,
+    },
+
+    disabledUpload: {
+        opacity: 0.6,
+        backgroundColor: "#E6E0E9",
+    },
+
+    disabledText: {
+        color: '#938F96',
     }
 })
 

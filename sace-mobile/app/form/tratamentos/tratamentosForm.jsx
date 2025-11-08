@@ -10,7 +10,7 @@ import FormTitle from '@/components/text/FormTitle';
 import CounterButton from '@/components/forms/CounterButton'
 import Label from '@/components/forms/label'
 
-function tratamentosForm({schema, control, baseName}) {
+function tratamentosForm({schema, control, baseName, errors, disabled = false}) {
 
   return (
     <View>
@@ -20,6 +20,8 @@ function tratamentosForm({schema, control, baseName}) {
             label= {`Selecione o tipo do ${baseName}:`}
             name={`${baseName}.tipo`}  
             schema={schema}
+            errors={errors}
+            disabled={disabled}
         />
 
         <FormPickerInput
@@ -28,6 +30,8 @@ function tratamentosForm({schema, control, baseName}) {
             subLabel="(pastilhas, pó, granulado, líquido)"
             name= {`${baseName}.forma`}  
             schema={schema}
+            errors={errors}
+            disabled={disabled}
         />
 
         <View style = {{marginBlock: 16}}>
@@ -37,6 +41,7 @@ function tratamentosForm({schema, control, baseName}) {
                 <CounterButton 
                     name = {`${baseName}.quantidade`}  
                     control = {control}
+                    disabled={disabled}
                 />
             </View>
             

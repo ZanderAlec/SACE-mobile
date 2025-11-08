@@ -3,35 +3,37 @@ import React from 'react'
 import {View, StyleSheet, Text, Pressable} from 'react-native'
 import { Controller } from 'react-hook-form';
 
-function CounterButton({name, control}) {
+function CounterButton({name, control, disabled = false}) {
   return (
     <Controller
       control = {control}
       name = {name}
       render =  {({field: {value, onChange}}) => {
         const decrement = () => {
-          if (value > 0) 
+          if (value > 0 && !disabled) 
               onChange(value - 1)
         }
         
         const increment = () => {
-            onChange(value + 1);
+            if (!disabled) {
+              onChange(value + 1);
+            }
         }
 
-        const disabled = value == 0;
+        const isMinValue = value == 0;
 
         return (
           <View style = {styles.flexRow}>
-              <Pressable  disabled={disabled} onPress={decrement}>
-                  <Text style = {[styles.bttm, disabled ? styles.disabledBttm : styles.blueBttm]}>-</Text>
+              <Pressable disabled={disabled || isMinValue} onPress={decrement}>
+                  <Text style = {[styles.bttm, (disabled || isMinValue) ? styles.disabledBttm : styles.blueBttm]}>-</Text>
               </Pressable>
 
-              <Pressable>
-                  <Text style = {[styles.bttm, styles.whiteBttm]}>{value}</Text>
+              <Pressable disabled={disabled}>
+                  <Text style = {[styles.bttm, styles.whiteBttm, disabled && styles.disabledText]}>{value}</Text>
               </Pressable>
 
-              <Pressable onPress={increment}>
-                  <Text style = {[styles.bttm, styles.blueBttm]} >+</Text>
+              <Pressable disabled={disabled} onPress={increment}>
+                  <Text style = {[styles.bttm, disabled ? styles.disabledBttm : styles.blueBttm]} >+</Text>
               </Pressable>
           </View>
         )
@@ -72,6 +74,10 @@ const styles = StyleSheet.create(
     disabledBttm: {
         color: '#938F96',
         backgroundColor: '#E6E0E9',
+    },
+
+    disabledText: {
+        opacity: 0.6,
     }
   }
 );

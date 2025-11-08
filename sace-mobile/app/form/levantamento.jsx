@@ -23,11 +23,24 @@ const settingSchema = visitSchema.pick({
 });
 
 
-function Levantamento({formHandler}) {
+function Levantamento({formHandler, register, isEditing = false}) {
+  console.log('Register in Levantamento:', register);
+
+  const {
+    df,
+    li,
+    pe,
+    pve,
+    deposito,
+  } = register || {};
+
+  const disabled = !isEditing;
+
    const {
       control,
       handleSubmit,
       setValue,
+      reset,
       formState: { errors },
     } = useForm({
       resolver: zodResolver(settingSchema),
@@ -75,6 +88,31 @@ function Levantamento({formHandler}) {
     }
   }, [formData, setValue]);
 
+  useEffect(() => {
+    if (register) {
+      const values = {
+        atividadesRealizadas: {
+          levantamentoIndice: typeof li === 'boolean' ? li : false,
+          pontoEstrategico: typeof pe === 'boolean' ? pe : false,
+          tratamento: (register.larvicidas?.length > 0 || register.adulticidas?.length > 0) ? true : false,
+          delimitacaoFoco: typeof df === 'boolean' ? df : false,
+          pesquisaVetorial: typeof pve === 'boolean' ? pve : false,
+        },
+        quantDepositos: {
+          armazenamentoElevado: deposito?.a1 || 0,
+          armazenamentoAguaSolo: deposito?.a2 || 0,
+          dispositivosMoveis: deposito?.b || 0,
+          dispositivosFixos: deposito?.c || 0,
+          pneus: deposito?.d1 || 0,
+          lixos: deposito?.d2 || 0,
+          naturais: deposito?.e || 0,
+        }
+      };
+      
+      reset(values);
+    }
+  }, [register, df, li, pe, pve, deposito, reset]);
+
   const onSubmit = (data) => {
     console.log("dados:", data);
     console.log("errors: ", errors);
@@ -105,26 +143,31 @@ function Levantamento({formHandler}) {
               control={control}
               name="atividadesRealizadas.levantamentoIndice"
               label = "LI - Levantamento de Índice"
+              disabled={disabled}
             />
             <CheckBox
               control={control}
               name="atividadesRealizadas.pontoEstrategico"
               label = "PE - Ponto estratégico"
+              disabled={disabled}
             />
             <CheckBox
               control={control}
               name="atividadesRealizadas.tratamento"
               label = "T - Tratamento"
+              disabled={disabled}
             />
             <CheckBox
               control={control}
               name="atividadesRealizadas.delimitacaoFoco"
               label = "DF - Delimitação de foco"
+              disabled={disabled}
             />
             <CheckBox
               control={control}
               name="atividadesRealizadas.pesquisaVetorial"
               label = "PVE - Pesquisa Vetorial Especial"
+              disabled={disabled}
             />
           </View>
         </View>
@@ -144,6 +187,7 @@ function Levantamento({formHandler}) {
             iconType = "armazenamentoAgua"
             control = {control}
             name = "quantDepositos.armazenamentoElevado"
+            disabled={disabled}
             />
           <Deposit 
             title = "A2" 
@@ -151,6 +195,7 @@ function Levantamento({formHandler}) {
             iconType = "aguaSolo"
             control = {control}
             name = "quantDepositos.armazenamentoAguaSolo"
+            disabled={disabled}
             />
 
           <Deposit 
@@ -159,6 +204,7 @@ function Levantamento({formHandler}) {
             iconType = "dispositivosMoveis"
             control = {control}
             name = "quantDepositos.dispositivosMoveis"
+            disabled={disabled}
           />
           <Deposit 
             title = "C" 
@@ -166,6 +212,7 @@ function Levantamento({formHandler}) {
             iconType = "dipositivosFixos"
             control = {control}
             name = "quantDepositos.dispositivosFixos"
+            disabled={disabled}
             />
             
           <Deposit 
@@ -174,6 +221,7 @@ function Levantamento({formHandler}) {
             iconType = "pneus"
             control = {control}
             name = "quantDepositos.pneus"
+            disabled={disabled}
           />
 
           <Deposit 
@@ -182,6 +230,7 @@ function Levantamento({formHandler}) {
             iconType = "lixos"
             control = {control}
             name = "quantDepositos.lixos"
+            disabled={disabled}
           />
 
           <Deposit 
@@ -190,6 +239,7 @@ function Levantamento({formHandler}) {
             iconType = "naturais"
             control = {control}
             name = "quantDepositos.naturais"
+            disabled={disabled}
           />
 
         </View>

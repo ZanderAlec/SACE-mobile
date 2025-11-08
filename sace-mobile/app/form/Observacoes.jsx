@@ -14,14 +14,23 @@ const obsSchema = visitSchema.pick({
   observacoes:true,
 });
 
-function Observacoes({formHandler}) {
+function Observacoes({formHandler, register, isEditing = false}) {
+  console.log('Register in Observacoes:', register);
+
+  const {
+    observacao,
+  } = register || {};
+
+  const disabled = !isEditing;
+
   const {nextStep, prevStep, formData, saveFormData} = formHandler;
 
     const {
         control,
         handleSubmit,
         formState: { errors },
-        setValue
+        setValue,
+        reset
     } = useForm({
         resolver: zodResolver(obsSchema),
         defaultValues: {
@@ -36,6 +45,12 @@ function Observacoes({formHandler}) {
         }
       }
     }, [formData, setValue]);
+
+    useEffect(() => {
+      if (register && observacao) {
+        reset({ observacoes: observacao });
+      }
+    }, [register, observacao, reset]);
 
     const onSubmit = (data) => {
         console.log("dados:", data);
@@ -59,6 +74,8 @@ function Observacoes({formHandler}) {
             schema = {obsSchema}
             multiline={true}
             maxLength={100}
+            errors = {errors}
+            disabled={disabled}
         />
         
         <View style={styles.flexRow}>

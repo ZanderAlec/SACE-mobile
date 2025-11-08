@@ -5,7 +5,7 @@ import { icons } from '../../constants/images'
 
 import CounterButton from './CounterButton';
 
-function Deposit({title, subtitle, iconType, control, name}) {    
+function Deposit({title, subtitle, iconType, control, name, disabled = false}) {    
   return (
     <View style={styles.container}>
         <Text style = {styles.title}>{title}</Text>
@@ -16,6 +16,7 @@ function Deposit({title, subtitle, iconType, control, name}) {
         <CounterButton 
             name = {name}
             control = {control}
+            disabled = {disabled}
         />
     </View>
     

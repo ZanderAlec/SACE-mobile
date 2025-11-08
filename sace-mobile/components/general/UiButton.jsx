@@ -2,14 +2,15 @@ import React from 'react'
 
 import { View, Pressable, Text, StyleSheet } from 'react-native'
 
-function UiButton({onPress, text, type = 'secondary', align = 'center'}) {
+function UiButton({onPress, text, type = 'secondary', align = 'center', disabled = false}) {
   return (
     <View style={[styles.container, styles[align]]}>
         <Pressable
             onPress={onPress}
-            style = {[styles.bttm, styles[type]]}
+            disabled={disabled}
+            style = {[styles.bttm, styles[type], disabled && styles.disabledButton]}
         >
-            <Text style ={styles.bttmText}>{text}</Text>
+            <Text style ={[styles.bttmText, disabled && styles.disabledText]}>{text}</Text>
         </Pressable>
     </View>
   )
@@ -18,7 +19,7 @@ function UiButton({onPress, text, type = 'secondary', align = 'center'}) {
 const styles = StyleSheet.create({
     
     container: {
-
+      
     },
 
     center: {
@@ -57,8 +58,16 @@ const styles = StyleSheet.create({
     bttmText: {
       color: 'white',
       fontSize: 16,
-    }
+    },
   
+    disabledButton: {
+      backgroundColor: '#938F96',
+      opacity: 0.6,
+    },
+  
+    disabledText: {
+      opacity: 0.8,
+    }
     
   });
 

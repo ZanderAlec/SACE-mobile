@@ -10,25 +10,25 @@ function StepIndicator({stepsNum, currStep, stepsTextList = []}) {
 
     for (let i = 0; i <= stepsNum; i++ ){
       indicators.push(
-        <View style={styles.indicatorContainer}>
+        <View key={i} style={styles.indicatorContainer}>
             {
               i < currStep ?
-                <FontAwesome5 name="check-circle" size={24} color="blue" /> 
+                <FontAwesome5 name="check-circle" size={24} color="#3B67CE" /> 
                 
 
                 : i === currStep ?
                 <View  style = {styles.iconContainer}>
-                    <FontAwesome5 name="dot-circle"   style={styles.stepIcon} size={24}color="blue" />
+                    <FontAwesome5 name="dot-circle"   style={styles.stepIcon} size={24} color="#3B67CE" />
                 </View>
 
                 : 
 
-                <FontAwesome5 name="circle" size={24} color="blue" /> 
+                <FontAwesome5 name="circle" size={24} color="#72777B" /> 
             }
             
             {
             i != stepsNum &&
-             <View style={styles.activeLine}/>
+             <View style={[styles.line, i < currStep ? styles.blue : styles.gray]}/>
             }
 
             
@@ -36,7 +36,7 @@ function StepIndicator({stepsNum, currStep, stepsTextList = []}) {
       );
     }
 
-    return <View style={styles.indicatorContainer}><Text>{indicators} </Text></View>
+    return <View style={styles.indicatorContainer}>{indicators}</View>
   }
 
   return (
@@ -51,7 +51,9 @@ function StepIndicator({stepsNum, currStep, stepsTextList = []}) {
 const styles = StyleSheet.create({
 
   container:{
-    marginBottom: 16
+    marginBottom: 16,
+    width: '100%',
+    alignItems: 'center',
   },
 
     indicatorContainer:{
@@ -71,11 +73,19 @@ const styles = StyleSheet.create({
     margin: 3,
   },
 
-  activeLine:{
+
+  line: {
     width: 20,
     height: 2,
-    backgroundColor: 'blue',
     margin: 3,
+  },
+
+  blue:{
+    backgroundColor: '#3B67CE',
+  },
+
+  gray:{
+    backgroundColor: '#72777B',
   },
 
   iconContainer:{
