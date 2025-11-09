@@ -39,12 +39,37 @@ function Login() {
         try {
             const response = await authApi.login(data.username, data.password);
             console.log('Login response:', response);
+            console.log('Login response keys:', Object.keys(response || {}));
             
             // Extract token from response - adjust based on your API response structure
             const token = response.token;
             
             if (token) {
-                await login(token);
+                // Extract user info (including nome_completo) from response
+                // Try multiple possible locations for nome_completo
+                const nome_completo = response.nome_completo 
+                    || response.user?.nome_completo 
+                    || response.usuario?.nome_completo
+                    || response.data?.nome_completo
+                    || response.data?.user?.nome_completo
+                    || null;
+                
+                console.log('Extracted nome_completo:', nome_completo);
+                
+                // Build userData object - only include if nome_completo exists
+                const userData = nome_completo ? {
+                    nome_completo: nome_completo,
+                    ...(response.user || response.usuario || response.data || {}), // Include any other user data
+                } : null;
+                
+                console.log('UserData to be stored:', userData);
+                
+                if (!userData) {
+                    console.warn('Warning: nome_completo not found in login response. User info will not be stored.');
+                    console.log('Full response structure:', JSON.stringify(response, null, 2));
+                }
+                
+                await login(token, userData);
                 // Navigate to main app after successful login
                 router.replace('/(tabs)');
             } else {
