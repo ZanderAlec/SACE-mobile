@@ -33,11 +33,13 @@ api.interceptors.request.use(
             
             // For FormData, remove Content-Type to let React Native set it with boundary
             // Check if data is FormData (React Native FormData)
+            // React Native FormData has _parts or _streams property
             const isFormData = config.data && (
                 config.data instanceof FormData || 
                 (typeof FormData !== 'undefined' && config.data.constructor && config.data.constructor.name === 'FormData') ||
                 (config.data._parts !== undefined) ||
-                (config.data._streams !== undefined)
+                (config.data._streams !== undefined) ||
+                (config.data.constructor?.name === 'FormData')
             );
             
             if (isFormData) {
@@ -50,8 +52,18 @@ api.interceptors.request.use(
                 }
                 console.log('FormData request detected, Content-Type removed, timeout:', config.timeout);
                 console.log('Headers after FormData detection:', Object.keys(config.headers));
+                console.log('FormData check details:', {
+                    instanceof: config.data instanceof FormData,
+                    constructorName: config.data.constructor?.name,
+                    hasParts: config.data._parts !== undefined,
+                    hasStreams: config.data._streams !== undefined,
+                });
             } else {
-                console.log('Not FormData, keeping Content-Type:', config.headers['Content-Type']);
+                // Ensure Content-Type is set for non-FormData requests
+                if (!config.headers['Content-Type'] && !config.headers['content-type']) {
+                    config.headers['Content-Type'] = 'application/json';
+                }
+                console.log('Not FormData, Content-Type:', config.headers['Content-Type']);
             }
         } catch (error) {
             console.error('Error getting token:', error);
@@ -165,7 +177,13 @@ const registersApi = {
             data.append('imovel_lado', String(formData.imovel_lado || ''));
             data.append('imovel_categoria_da_localidade', String(formData.imovel_categoria_da_localidade || ''));
             data.append('imovel_tipo', String(formData.imovel_tipo || ''));
-            data.append('imovel_status', String(formData.imovel_status || ''));
+            // Status is required - ensure it's not null/undefined
+            if (formData.imovel_status) {
+                data.append('imovel_status', String(formData.imovel_status));
+            } else {
+                console.error('ERROR: imovel_status is missing! This is a required field.');
+                throw new Error('Status do imóvel é obrigatório');
+            }
             
             // Required integer field - area_de_visita_id
             data.append('area_de_visita_id', parseInt(formData.area_de_visita_id, 10));
@@ -187,12 +205,12 @@ const registersApi = {
                 data.append('formulario_tipo', String(formData.formulario_tipo));
             }
             
-            // Boolean flags - send actual booleans (FormData will convert to strings)
-            data.append('li', formData.li === true);
-            data.append('pe', formData.pe === true);
-            data.append('t', formData.t === true);
-            data.append('df', formData.df === true);
-            data.append('pve', formData.pve === true);
+            // Boolean flags - send as strings "true" or "false" (some backends expect strings)
+            data.append('li', String(formData.li === true));
+            data.append('pe', String(formData.pe === true));
+            data.append('t', String(formData.t === true));
+            data.append('df', String(formData.df === true));
+            data.append('pve', String(formData.pve === true));
             
             // Optional string fields
             if (formData.numero_da_amostra) {
@@ -265,11 +283,19 @@ const registersApi = {
             console.log('FormData has _streams:', data._streams ? 'yes' : 'no');
             
             // Use axios with proper config for FormData
+            // Important: Don't let axios transform FormData - it should be sent as-is
             const response = await api.post('/registro_de_campo', data, {
                 timeout: 60000, // 60 second timeout for file uploads
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
-                // Don't use transformRequest - let the interceptor handle it
+                transformRequest: (data, headers) => {
+                    // If it's FormData, return it as-is (don't transform)
+                    if (data instanceof FormData || data._parts || data._streams) {
+                        return data;
+                    }
+                    // For other data types, use default JSON transformation
+                    return JSON.stringify(data);
+                },
             });
             console.log('Request successful:', response.status);
             return response.data;
