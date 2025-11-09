@@ -52,12 +52,27 @@ function Login() {
             }
         } catch (error) {
             console.log('Login error:', error);
-            if (error.response?.status === 401) 
+            console.log('Error details:', {
+                status: error.response?.status,
+                statusText: error.response?.statusText,
+                data: error.response?.data,
+                url: error.config?.url,
+                method: error.config?.method,
+                baseURL: error.config?.baseURL,
+                isNetworkError: error.isNetworkError
+            });
+            
+            // Handle different error types
+            if (error.response?.status === 401) {
                 setErrorMessage({message: 'Credenciais inválidas!'});
-            else if (error.response?.status === 500) 
+            } else if (error.response?.status === 500) {
                 setErrorMessage({message: 'Estamos com problemas no servidor!'});
-            else
+            } else if (error.isNetworkError) {
+                // Use helpful message from interceptor if available
+                setErrorMessage({message: error.helpfulMessage || 'Erro de conexão. Verifique se o servidor está rodando.'});
+            } else {
                 setErrorMessage({message: 'Erro de conexão. Tente novamente.'});
+            }
         } finally {
             setIsLoading(false);
         }

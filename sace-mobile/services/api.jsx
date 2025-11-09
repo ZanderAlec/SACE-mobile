@@ -3,7 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-console.log('API_URL:', API_URL);
+// Log API URL for debugging (will show undefined if not set)
+console.log('API_URL from .env:', API_URL || 'NOT SET - Check your .env file');
 
 const api = axios.create({
     baseURL: API_URL,
@@ -17,12 +18,17 @@ const api = axios.create({
 api.interceptors.request.use(
     async (config) => {
         try {
-            const token = await AsyncStorage.getItem('authToken');
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-                console.log('Token added to request for:', config.url);
-            } else {
-                console.warn('No token found in AsyncStorage for request:', config.url);
+            // Skip token check for login endpoint (login doesn't need token)
+            const isLoginRequest = config.url === '/login' || config.url?.endsWith('/login');
+            
+            if (!isLoginRequest) {
+                const token = await AsyncStorage.getItem('authToken');
+                if (token) {
+                    config.headers.Authorization = `Bearer ${token}`;
+                    console.log('Token added to request for:', config.url);
+                } else {
+                    console.warn('No token found in AsyncStorage for request:', config.url);
+                }
             }
             
             // For FormData, remove Content-Type to let React Native set it with boundary
@@ -57,10 +63,37 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor to handle token expiration
+// Response interceptor to handle token expiration and connection errors
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
+        // Handle connection errors (network issues, server down, etc.)
+        if (!error.response) {
+            const fullUrl = (error.config?.baseURL || 'NOT SET') + (error.config?.url || '');
+            console.error('\n========== CONNECTION ERROR ==========');
+            console.error('Error message:', error.message);
+            console.error('Error code:', error.code);
+            console.error('Full Request URL:', fullUrl);
+            console.error('API_URL from env:', API_URL || 'NOT SET - Check .env file');
+            console.error('\nPossible causes:');
+            console.error('1. Server is not running on', error.config?.baseURL || 'unknown');
+            console.error('2. Network connectivity issue');
+            console.error('3. Wrong URL in .env file');
+            if (error.config?.baseURL?.includes('localhost') || error.config?.baseURL?.includes('127.0.0.1')) {
+                console.error('\n⚠️  LOCALHOST DETECTED - This will NOT work on Android!');
+                console.error('For Android Emulator: Use http://10.0.2.2:5000');
+                console.error('For Physical Device: Use your computer IP (e.g., http://192.168.1.100:5000)');
+                console.error('Find your IP: Windows: ipconfig | Mac/Linux: ifconfig');
+            }
+            console.error('=====================================\n');
+            
+            // Add helpful info to error object for UI
+            error.isNetworkError = true;
+            error.helpfulMessage = error.config?.baseURL?.includes('localhost') || error.config?.baseURL?.includes('127.0.0.1')
+                ? 'Erro: localhost não funciona no Android. Use 10.0.2.2 (emulador) ou o IP do computador (dispositivo físico).'
+                : 'Erro de conexão. Verifique se o servidor está rodando e a URL no .env está correta.';
+        }
+        
         if (error.response?.status === 401) {
             // Token expired or invalid, clear stored token
             try {
@@ -76,11 +109,14 @@ api.interceptors.response.use(
 
 const authApi = {
     async login(username, password) {
-
         try {
+            const loginUrl = API_URL ? `${API_URL}/login` : '/login';
+            console.log('Attempting login to:', loginUrl);
+            console.log('API_URL value:', API_URL || 'UNDEFINED - Check your .env file');
             const response = await api.post('/login', { username: username, password });
             return response.data;
         } catch (error) {
+            // Error is already logged by the interceptor
             throw error;
         }
     },

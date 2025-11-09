@@ -107,12 +107,27 @@ function ImoveisList() {
         <SafeAreaView style={styles.safeArea}>
             <ScrollView style={styles.container}>
             {/* Back button */}
+            <Pressable style={styles.backButtonContainer} onPress={handleBack}>
+                <Feather name="arrow-left" size={24} color="#3B67CE" />
+                <Text style={styles.backButtonText}>Voltar</Text>
+            </Pressable>
+
             <View style = {styles.header}>
-                <Pressable style={styles.backButtonContainer} onPress={handleBack}>
-                    <Feather name="arrow-left" size={24} color="#3B67CE" />
-                </Pressable>
 
                 <Text style={styles.headerTitle}>{area.setor}</Text>
+                <Pressable 
+                    style={styles.addButton}
+                    onPress={() => router.push({
+                        pathname: '/form',
+                        params: {
+                            area: JSON.stringify(area)
+                        }
+                    })}
+                >
+                    <Text style={styles.addButtonText}>Novo registro</Text>
+                </Pressable>
+
+
             </View>
 
         
@@ -144,7 +159,7 @@ function ImoveisList() {
                                 }
                             })}
                         >
-                            <Text style={styles.addButtonText}>Adicionar Novo Imóvel</Text>
+                            <Text style={styles.addButtonText}>Novo registro</Text>
                         </Pressable>
                     </View>
                 ) : (
@@ -226,6 +241,7 @@ const styles = StyleSheet.create({
     },
     imoveisContainer: {
         marginTop: 16,
+        backgroundColor: '',
     },
     sectionTitle: {
         fontSize: 20,
@@ -246,7 +262,7 @@ const styles = StyleSheet.create({
     },
     addButton: {
         backgroundColor: '#3B67CE',
-        paddingHorizontal: 24,
+        paddingHorizontal: 8,
         paddingVertical: 12,
         borderRadius: 8,
     },
@@ -287,11 +303,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 24,
         alignItems: 'center',
+        alignContent: 'center',
     },  
 
     headerTitle: {
         fontSize: 20,
-    }
+        marginTop: 16,
+    },
+
+    backButtonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
 });
 
 export default ImoveisList

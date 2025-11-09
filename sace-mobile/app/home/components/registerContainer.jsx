@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native'
+import { View, Text, StyleSheet, Pressable, Modal } from 'react-native'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { router } from 'expo-router';
 import { registersApi } from '@/services/api';
+import UiButton from '@/components/general/UiButton';
 
 function registerContainer({register, onDelete}) {
     const {
@@ -24,50 +25,58 @@ function registerContainer({register, onDelete}) {
     } = register;
     
     const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteSuccess, setDeleteSuccess] = useState(false);
+    const [deleteError, setDeleteError] = useState(null);
     
-    const handleDeletePress = async () => {
+    const handleDeletePress = () => {
         const registroId = registro_de_campo_id || id;
         
         if (!registroId) {
-            Alert.alert('Erro', 'ID do registro não encontrado');
+            setDeleteError('ID do registro não encontrado');
+            setShowDeleteModal(true);
             return;
         }
         
-        Alert.alert(
-            'Confirmar exclusão',
-            'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.',
-            [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel'
-                },
-                {
-                    text: 'Excluir',
-                    style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            setIsDeleting(true);
-                            await registersApi.deleteRegister(registroId);
-                            Alert.alert('Sucesso', 'Registro excluído com sucesso!');
-                            
-                            // Call the onDelete callback if provided to refresh the list
-                            if (onDelete) {
-                                onDelete();
-                            } else {
-                                // Fallback: navigate back or reload
-                                router.back();
-                            }
-                        } catch (error) {
-                            console.error('Error deleting register:', error);
-                            const errorMessage = error.response?.data?.message || error.message || 'Erro ao excluir registro';
-                            Alert.alert('Erro', errorMessage);
-                        } finally {
-                            setIsDeleting(false);
-                        }
-                    }
-                }
-            ]
-        );
+        setDeleteError(null);
+        setDeleteSuccess(false);
+        setShowDeleteModal(true);
+    }
+    
+    const handleConfirmDelete = async () => {
+        const registroId = registro_de_campo_id || id;
+        
+        try {
+            setIsDeleting(true);
+            setDeleteError(null);
+            
+            await registersApi.deleteRegister(registroId);
+            
+            // If no error was thrown, the delete was successful (200 status)
+            setDeleteSuccess(true);
+        } catch (error) {
+            console.error('Error deleting register:', error);
+            const errorMessage = error.response?.data?.message || error.message || 'Erro ao excluir registro';
+            setDeleteError(errorMessage);
+        } finally {
+            setIsDeleting(false);
+        }
+    }
+    
+    const handleCloseModal = () => {
+        const wasSuccessful = deleteSuccess;
+        setShowDeleteModal(false);
+        setDeleteSuccess(false);
+        setDeleteError(null);
+        
+        // If delete was successful, refresh the list or navigate back
+        if (wasSuccessful) {
+            if (onDelete) {
+                onDelete();
+            } else {
+                router.back();
+            }
+        }
     }
 
     const handleEditPress = () => {
@@ -138,6 +147,59 @@ function registerContainer({register, onDelete}) {
                 </View>
         
             </View>
+            
+            {/* Delete Confirmation Modal */}
+            <Modal
+                visible={showDeleteModal}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={handleCloseModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        {deleteSuccess ? (
+                            // Success state
+                            <>
+                                <Text style={styles.modalTitle}>Sucesso</Text>
+                                <Text style={styles.modalMessage}>Registro deletado com sucesso!</Text>
+                                <View style={styles.modalButtonsSingle}>
+                                    <UiButton
+                                        text="Fechar"
+                                        onPress={handleCloseModal}
+                                        type="primary"
+                                        align="center"
+                                    />
+                                </View>
+                            </>
+                        ) : (
+                            // Confirmation state
+                            <>
+                                <Text style={styles.modalTitle}>Confirmar exclusão</Text>
+                                <Text style={styles.modalMessage}>Tem certeza que deseja deletar?</Text>
+                                {deleteError && (
+                                    <Text style={styles.errorText}>{deleteError}</Text>
+                                )}
+                                <View style={styles.modalButtons}>
+                                    <UiButton
+                                        text="Cancelar"
+                                        onPress={handleCloseModal}
+                                        type="secondary"
+                                        align="left"
+                                        disabled={isDeleting}
+                                    />
+                                    <UiButton
+                                        text={isDeleting ? "Deletando..." : "Confirmar"}
+                                        onPress={handleConfirmDelete}
+                                        type="primary"
+                                        align="right"
+                                        disabled={isDeleting}
+                                    />
+                                </View>
+                            </>
+                        )}
+                    </View>
+                </View>
+            </Modal>
     </View>
   )}
 
@@ -181,6 +243,65 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         color: '#3B67CE',
+    },
+    
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 24,
+        width: '100%',
+        maxWidth: 400,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+    
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#333153',
+        marginBottom: 16,
+        textAlign: 'center',
+    },
+    
+    modalMessage: {
+        fontSize: 16,
+        color: '#72777B',
+        marginBottom: 24,
+        textAlign: 'center',
+    },
+    
+    errorText: {
+        fontSize: 14,
+        color: '#ED1B24',
+        marginBottom: 16,
+        textAlign: 'center',
+    },
+    
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 12,
+        marginTop: 8,
+    },
+    
+    modalButtonsSingle: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginTop: 8,
     },
 })
 
