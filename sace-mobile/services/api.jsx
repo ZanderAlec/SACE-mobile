@@ -296,21 +296,19 @@ const registersApi = {
     async updateRegister(registro_de_campo_id, formData) {
         try {
             console.log('updateRegister called with:', { registro_de_campo_id, formData });
+            
             // Use FormData for file upload support
             const data = new FormData();
-            console.log('FormData instance created:', data instanceof FormData);
             
-            // Required string fields - always append even if empty
+            // ===== REQUIRED STRING FIELDS (*) =====
             data.append('imovel_numero', String(formData.imovel_numero || ''));
             data.append('imovel_lado', String(formData.imovel_lado || ''));
             data.append('imovel_categoria_da_localidade', String(formData.imovel_categoria_da_localidade || ''));
             data.append('imovel_tipo', String(formData.imovel_tipo || ''));
             data.append('imovel_status', String(formData.imovel_status || ''));
             
-            // Required integer field - area_de_visita_id
+            // ===== REQUIRED INTEGER FIELDS (*) =====
             data.append('area_de_visita_id', parseInt(formData.area_de_visita_id, 10));
-            
-            // Required integer fields - deposit counts (a1, a2, b, c, d1, d2, e)
             data.append('a1', parseInt(formData.a1 || 0, 10));
             data.append('a2', parseInt(formData.a2 || 0, 10));
             data.append('b', parseInt(formData.b || 0, 10));
@@ -319,49 +317,62 @@ const registersApi = {
             data.append('d2', parseInt(formData.d2 || 0, 10));
             data.append('e', parseInt(formData.e || 0, 10));
             
-            // Optional string fields
-            if (formData.imovel_complemento) {
+            // ===== OPTIONAL STRING FIELDS =====
+            if (formData.imovel_complemento !== undefined && formData.imovel_complemento !== null && formData.imovel_complemento !== '') {
                 data.append('imovel_complemento', String(formData.imovel_complemento));
             }
-            if (formData.formulario_tipo) {
+            
+            if (formData.formulario_tipo !== undefined && formData.formulario_tipo !== null && formData.formulario_tipo !== '') {
                 data.append('formulario_tipo', String(formData.formulario_tipo));
             }
             
-            // Boolean flags - send actual booleans (FormData will convert to strings)
-            data.append('li', formData.li === true);
-            data.append('pe', formData.pe === true);
-            data.append('t', formData.t === true);
-            data.append('df', formData.df === true);
-            data.append('pve', formData.pve === true);
+            // ===== OPTIONAL BOOLEAN FIELDS =====
+            // Only append if explicitly set (true or false)
+            if (formData.li !== undefined && formData.li !== null) {
+                data.append('li', formData.li === true);
+            }
+            if (formData.pe !== undefined && formData.pe !== null) {
+                data.append('pe', formData.pe === true);
+            }
+            if (formData.t !== undefined && formData.t !== null) {
+                data.append('t', formData.t === true);
+            }
+            if (formData.df !== undefined && formData.df !== null) {
+                data.append('df', formData.df === true);
+            }
+            if (formData.pve !== undefined && formData.pve !== null) {
+                data.append('pve', formData.pve === true);
+            }
             
-            // Optional string fields
-            if (formData.numero_da_amostra) {
+            // ===== OPTIONAL STRING FIELDS =====
+            if (formData.numero_da_amostra !== undefined && formData.numero_da_amostra !== null && formData.numero_da_amostra !== '') {
                 data.append('numero_da_amostra', String(formData.numero_da_amostra));
             }
             
-            // Optional integer field - quantiade_tubitos
+            // ===== OPTIONAL INTEGER FIELDS =====
             if (formData.quantiade_tubitos !== undefined && formData.quantiade_tubitos !== null) {
                 data.append('quantiade_tubitos', parseInt(formData.quantiade_tubitos, 10));
             }
             
-            // Optional string fields
-            if (formData.observacao) {
+            // ===== OPTIONAL STRING FIELDS =====
+            if (formData.observacao !== undefined && formData.observacao !== null && formData.observacao !== '') {
                 data.append('observacao', String(formData.observacao));
             }
             
-            // Optional JSON string fields - larvicidas and adulticidas
-            if (formData.larvicidas) {
+            // ===== OPTIONAL JSON STRING FIELDS =====
+            if (formData.larvicidas !== undefined && formData.larvicidas !== null && formData.larvicidas !== '') {
                 data.append('larvicidas', String(formData.larvicidas));
             }
-            if (formData.adulticidas) {
+            
+            if (formData.adulticidas !== undefined && formData.adulticidas !== null && formData.adulticidas !== '') {
                 data.append('adulticidas', String(formData.adulticidas));
             }
             
-            // Add files if they exist
+            // ===== OPTIONAL FILES ARRAY =====
             if (formData.files && Array.isArray(formData.files) && formData.files.length > 0) {
                 console.log('Adding files to FormData:', formData.files.length);
                 formData.files.forEach((file, index) => {
-                    if (file.uri) {
+                    if (file && file.uri) {
                         // React Native FormData file format for Android/iOS
                         const fileExtension = file.name?.split('.').pop() || file.uri.split('.').pop() || 'jpg';
                         const fileName = file.name || `file_${index}.${fileExtension}`;
@@ -377,26 +388,36 @@ const registersApi = {
                         });
                     }
                 });
-            } else {
-                console.log('No files to upload');
             }
             
             console.log('FormData being sent for update:', {
                 registro_de_campo_id,
-                imovel_numero: formData.imovel_numero,
-                imovel_lado: formData.imovel_lado,
-                imovel_categoria_da_localidade: formData.imovel_categoria_da_localidade,
-                imovel_tipo: formData.imovel_tipo,
-                imovel_status: formData.imovel_status,
-                area_de_visita_id: formData.area_de_visita_id,
+                endpoint: `/registro_de_campo/${registro_de_campo_id}`,
+                required_fields: {
+                    imovel_numero: formData.imovel_numero,
+                    imovel_lado: formData.imovel_lado,
+                    imovel_categoria_da_localidade: formData.imovel_categoria_da_localidade,
+                    imovel_tipo: formData.imovel_tipo,
+                    imovel_status: formData.imovel_status,
+                    area_de_visita_id: formData.area_de_visita_id,
+                    a1: formData.a1,
+                    a2: formData.a2,
+                    b: formData.b,
+                    c: formData.c,
+                    d1: formData.d1,
+                    d2: formData.d2,
+                    e: formData.e,
+                }
             });
             
-            // Use axios with proper config for FormData
+            // Make PUT request to /registro_de_campo/{registro_de_campo_id}
+            // Note: Content-Type header is automatically handled by the axios interceptor for FormData
             const response = await api.put(`/registro_de_campo/${registro_de_campo_id}`, data, {
                 timeout: 60000, // 60 second timeout for file uploads
                 maxContentLength: Infinity,
                 maxBodyLength: Infinity,
             });
+            
             console.log('Update request successful:', response.status);
             return response.data;
         } catch (error) {
@@ -405,6 +426,7 @@ const registersApi = {
                 response: error.response?.data,
                 status: error.response?.status,
                 statusText: error.response?.statusText,
+                url: error.config?.url,
             });
             throw error;
         }
