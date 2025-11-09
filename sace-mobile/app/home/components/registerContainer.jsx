@@ -1,11 +1,12 @@
-import React from 'react'
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { router } from 'expo-router';
+import { registersApi } from '@/services/api';
 
-function registerContainer({register}) {
+function registerContainer({register, onDelete}) {
     const {
         imovel_complemento: complemento,
         imovel_lado: lado,
@@ -18,25 +19,73 @@ function registerContainer({register}) {
         },
         ciclo,
         agente_nome: responsavel,
+        registro_de_campo_id,
+        id,
     } = register;
-    const handleDeletePress = (e) => {}
-    const handleEditPress = (e) => {}
-
-    const handleCheckboxPress = (e) => {
-    }
     
-    const handlePress = () => {
+    const [isDeleting, setIsDeleting] = useState(false);
+    
+    const handleDeletePress = async () => {
+        const registroId = registro_de_campo_id || id;
+        
+        if (!registroId) {
+            Alert.alert('Erro', 'ID do registro não encontrado');
+            return;
+        }
+        
+        Alert.alert(
+            'Confirmar exclusão',
+            'Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel'
+                },
+                {
+                    text: 'Excluir',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            setIsDeleting(true);
+                            await registersApi.deleteRegister(registroId);
+                            Alert.alert('Sucesso', 'Registro excluído com sucesso!');
+                            
+                            // Call the onDelete callback if provided to refresh the list
+                            if (onDelete) {
+                                onDelete();
+                            } else {
+                                // Fallback: navigate back or reload
+                                router.back();
+                            }
+                        } catch (error) {
+                            console.error('Error deleting register:', error);
+                            const errorMessage = error.response?.data?.message || error.message || 'Erro ao excluir registro';
+                            Alert.alert('Erro', errorMessage);
+                        } finally {
+                            setIsDeleting(false);
+                        }
+                    }
+                }
+            ]
+        );
+    }
+
+    const handleEditPress = () => {
+        const registroId = registro_de_campo_id || id;
         router.push({
             pathname: '/form',
             params: {
-                register: JSON.stringify(register)
+                register: JSON.stringify(register),
+                mode: 'edit'
             }
         });
     }
 
+    const handleCheckboxPress = (e) => {
+    }
 
   return (
-    <Pressable style={styles.container} onPress={handlePress}>
+    <View style={styles.container}>
             <View style={styles.containerButtons}>
                 <Pressable onPress={handleCheckboxPress}>
                     {status === 'inspecionado'
@@ -45,8 +94,8 @@ function registerContainer({register}) {
                     }
                 </Pressable>
                 <View style={styles.containerButtons}>
-                    <Pressable onPress={handleDeletePress}>
-                    <MaterialCommunityIcons name="delete-outline" size={24} color="#ED1B24" />
+                    <Pressable onPress={handleDeletePress} disabled={isDeleting}>
+                    <MaterialCommunityIcons name="delete-outline" size={24} color={isDeleting ? "#999" : "#ED1B24"} />
                     </Pressable>
 
                     <Pressable onPress={handleEditPress}>
@@ -89,7 +138,7 @@ function registerContainer({register}) {
                 </View>
         
             </View>
-    </Pressable>
+    </View>
   )}
 
 const styles = StyleSheet.create({

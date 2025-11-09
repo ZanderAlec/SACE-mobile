@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, router } from 'expo-router'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Feather from '@expo/vector-icons/Feather'
@@ -7,6 +8,7 @@ import Fontisto from '@expo/vector-icons/Fontisto'
 import AreaContainer from './areaContainer'
 import Title from '@/components/text/Title'
 import { areasApi } from '@/services/api'
+import Imovel from './imovel'
 
 function ImoveisList() {
     const params = useLocalSearchParams();
@@ -61,7 +63,8 @@ function ImoveisList() {
         router.push({
             pathname: '/form',
             params: {
-                register: JSON.stringify(register)
+                register: JSON.stringify(register),
+                area: JSON.stringify(area)
             }
         });
     };
@@ -82,26 +85,27 @@ function ImoveisList() {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
+            <SafeAreaView style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#3b67ce" />
                 <Text style={styles.loadingText}>Carregando...</Text>
-            </View>
+            </SafeAreaView>
         );
     }
 
     if (!area) {
         return (
-            <View style={styles.errorContainer}>
+            <SafeAreaView style={styles.errorContainer}>
                 <Text style={styles.errorText}>Área não encontrada</Text>
                 <Pressable onPress={handleBack} style={styles.backButton}>
                     <Text style={styles.backButtonText}>Voltar</Text>
                 </Pressable>
-            </View>
+            </SafeAreaView>
         );
     }
 
     return (
-        <ScrollView style={styles.container}>
+        <SafeAreaView style={styles.safeArea}>
+            <ScrollView style={styles.container}>
             {/* Back button */}
             <View style = {styles.header}>
                 <Pressable style={styles.backButtonContainer} onPress={handleBack}>
@@ -145,51 +149,28 @@ function ImoveisList() {
                     </View>
                 ) : (
                     imoveis.map((register, index) => {
-                        const {
-                            imovel_numero: numero,
-                            imovel_lado: lado,
-                            imovel_tipo: tipo,
-                            imovel_status: status,
-                            imovel_complemento: complemento,
-                            area_de_visita = {}
-                        } = register || {};
-                        
                         return (
-                            <Pressable
+                            <Imovel 
                                 key={register.id || register.registro_de_campo_id || index}
-                                style={styles.imovelItem}
-                                onPress={() => handleImovelPress(register)}
-                            >
-                                <View style={styles.imovelContent}>
-                                    <Text style={styles.imovelTitle}>
-                                        {numero ? `Imóvel ${numero}` : `Registro ${index + 1}`}
-                                    </Text>
-                                    {lado && (
-                                        <Text style={styles.imovelSubtitle}>Lado: {lado}</Text>
-                                    )}
-                                    {tipo && (
-                                        <Text style={styles.imovelSubtitle}>Tipo: {tipo}</Text>
-                                    )}
-                                    {complemento && (
-                                        <Text style={styles.imovelSubtitle}>Complemento: {complemento}</Text>
-                                    )}
-                                    {status && (
-                                        <Text style={[styles.imovelSubtitle, status === 'inspecionado' && styles.statusInspected]}>
-                                            Status: {status}
-                                        </Text>
-                                    )}
-                                </View>
-                                <Feather name="chevron-right" size={24} color="#72777B" />
-                            </Pressable>
+                                imovel={register} 
+                                area={area}
+                                index={index}
+                                onPress={() => handleImovelPress(register)} 
+                            />
                         );
                     })
                 )}
             </View>
         </ScrollView>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#f2f6fe',
+    },
     container: {
         flex: 1,
         backgroundColor: '#f2f6fe',

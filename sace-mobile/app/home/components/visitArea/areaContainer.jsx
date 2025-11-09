@@ -49,25 +49,9 @@ function AreaContainer({area, onPress, disabled = false}) {
 
   return (
     <Pressable style={styles.containerAreas} onPress={handlePress} disabled={disabled}>
-        <View style={styles.containerButtons}>
-            <Pressable onPress={handleCheckboxPress}>
-                {status === 'Visitado'
-                 ? <Fontisto name="checkbox-active" size={16} color="black" /> 
-                 : <Fontisto name="checkbox-passive" size={16} color="black" />
-                }
-            </Pressable>
-            <View style={styles.containerButtons}>
-                <Pressable onPress={handleDeletePress}>
-                 <MaterialCommunityIcons name="delete-outline" size={24} color="#ED1B24" />
-                </Pressable>
 
-                <Pressable onPress={handleEditPress}>
-                    <Feather name="edit-2" size={24} color="black" />
-                </Pressable>
-            </View>
-        </View>
 
-        <View style={styles.containerAreaItem}>
+        <View style={styles.containerAreaItemFirst}>
             <Text>Identificador do setor</Text>
             <Text style={[styles.infoText, styles.setor]}>{setor}</Text>
         </View>
@@ -97,22 +81,31 @@ function AreaContainer({area, onPress, disabled = false}) {
 
 const styles = StyleSheet.create({
     
-    containerButtons: {
-        flexDirection: 'row',
-        gap: 10,
-        paddingBlock: 5,
-        paddingHorizontal: 10,
-        paddingInline: 10,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        borderRadius: 10,
-      },
+  containerButtons: {
+    flexDirection: 'row',
+    gap: 10,
+    paddingBlock: 5,
+    paddingHorizontal: 10,
+    paddingInline: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+  },
 
   containerAreas: {
     marginTop: 24,
     backgroundColor: 'white',
     borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingBlock: 16,
+  
+  },
+
+  containerAreaItemFirst:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
   },
 
   containerAreaItem: {

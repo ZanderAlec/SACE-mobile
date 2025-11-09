@@ -93,6 +93,10 @@ function FieldRegisterForm() {
   }
 
   const onSubmit = async (uploadData) => {
+    // Check if we're editing an existing register
+    const registroId = parsedRegister?.registro_de_campo_id || parsedRegister?.id;
+    const isUpdating = isEditing && registroId;
+    
     try {
       setIsSubmitting(true);
       
@@ -183,19 +187,33 @@ function FieldRegisterForm() {
         return;
       }
       
-      const response = await registersApi.createRegister(requestBody);
-      console.log('Register created successfully:', response);
-      
-      Alert.alert('Sucesso', 'Registro criado com sucesso!', [
-        {
-          text: 'OK',
-          onPress: () => router.back()
-        }
-      ]);
+      let response;
+      if (isUpdating) {
+        // Update existing register using PUT
+        response = await registersApi.updateRegister(registroId, requestBody);
+        console.log('Register updated successfully:', response);
+        Alert.alert('Sucesso', 'Registro atualizado com sucesso!', [
+          {
+            text: 'OK',
+            onPress: () => router.back()
+          }
+        ]);
+      } else {
+        // Create new register using POST
+        response = await registersApi.createRegister(requestBody);
+        console.log('Register created successfully:', response);
+        Alert.alert('Sucesso', 'Registro criado com sucesso!', [
+          {
+            text: 'OK',
+            onPress: () => router.back()
+          }
+        ]);
+      }
       
     } catch (error) {
       console.error('Error submitting form:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Erro ao criar registro';
+      const action = isUpdating ? 'atualizar' : 'criar';
+      const errorMessage = error.response?.data?.message || error.message || `Erro ao ${action} registro`;
       Alert.alert('Erro', errorMessage);
     } finally {
       setIsSubmitting(false);

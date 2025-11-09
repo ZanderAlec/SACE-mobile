@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import {Button, View} from 'react-native'
 import { visitSchema } from '@/schemas/visitForm/schema'
 import { zodResolver } from "@hookform/resolvers/zod";
-import FormPickerInput from '@/components/forms/FormPickerInput';
+import FormTextInput from '@/components/forms/FormTextInput';
 import { useForm } from "react-hook-form";
 import Title from '@/components/text/Title';
 import FormTitle from '@/components/text/FormTitle';
@@ -15,23 +15,25 @@ function tratamentosForm({schema, control, baseName, errors, disabled = false}) 
   return (
     <View>
 
-        <FormPickerInput
+        <FormTextInput
             control={control}
-            label= {`Selecione o tipo do ${baseName}:`}
+            label= {`Tipo do ${baseName}:`}
             name={`${baseName}.tipo`}  
             schema={schema}
             errors={errors}
             disabled={disabled}
+            placeholder={`Digite o tipo do ${baseName}`}
         />
 
-        <FormPickerInput
+        <FormTextInput
             control={control}
-            label= {`Selecione a forma do ${baseName}:`}
+            label= {`Forma do ${baseName}:`}
             subLabel="(pastilhas, pó, granulado, líquido)"
             name= {`${baseName}.forma`}  
             schema={schema}
             errors={errors}
             disabled={disabled}
+            placeholder={`Digite a forma do ${baseName}`}
         />
 
         <View style = {{marginBlock: 16}}>

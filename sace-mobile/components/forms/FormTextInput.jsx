@@ -11,8 +11,26 @@ import { config } from 'zod/v4/core';
 export default function FormTextInput({schema, label, subLabel, name, control, placeholder = "", style, disabled = false, errors, ...rest}) {
 
   const [focused, setFocused] = useState(false);
-  const fieldSchema = schema.shape[name];
-  const isRequired = !(fieldSchema instanceof z.ZodOptional);
+  
+  // Handle nested paths (e.g., "larvicida.tipo")
+  const getNestedSchema = (schema, path) => {
+    const keys = path.split('.');
+    let currentSchema = schema;
+    for (const key of keys) {
+      if (currentSchema && currentSchema.shape) {
+        currentSchema = currentSchema.shape[key];
+      } else if (currentSchema && currentSchema._def && currentSchema._def.schema) {
+        // Handle ZodObject
+        currentSchema = currentSchema._def.schema.shape?.[key];
+      } else {
+        return null;
+      }
+    }
+    return currentSchema;
+  };
+  
+  const fieldSchema = getNestedSchema(schema, name) || schema.shape?.[name];
+  const isRequired = fieldSchema ? !(fieldSchema instanceof z.ZodOptional || fieldSchema._def?.typeName === 'ZodOptional') : false;
 
   const getNestedError = (errors, path) => {
     if (!errors || !path) return null;

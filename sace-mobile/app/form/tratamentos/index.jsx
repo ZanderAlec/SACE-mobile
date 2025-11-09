@@ -125,43 +125,28 @@ function Tratamentos({formHandler, register, isEditing = false}) {
         <Title>Tratamentos aplicados</Title>
         <View style = {styles.flexRow}>
             <FormTitle>Larvicida</FormTitle>
-            <Button 
-                title={larvFormVisible ? '- Remover' : '+ Adicionar' }
-                onPress={() => {setLarvFormVisible(prev => !prev)} }/>
         </View>
 
-        {
-            larvFormVisible && 
-
-            <TratamentosForm 
-                control = {control}
-                schema = {treatmentsSchema}
-                baseName={`larvicida`}
-                errors = {errors}
-                disabled={disabled}
-            />
-        }
-        
-
-        <View style = {styles.flexRow}>
-            <FormTitle>Adulticida</FormTitle>
-            <Button 
-                title={adultFormVisible ? '- Remover' : '+ Adicionar' }
-                onPress={() => {setAdultFormVisible(prev => !prev)} }/>
-        </View>
-
-        {
-            adultFormVisible &&
-
-            <TratamentosForm 
+        <TratamentosForm 
             control = {control}
             schema = {treatmentsSchema}
-            baseName={`adulticida`}
+            baseName={`larvicida`}
             errors = {errors}
             disabled={disabled}
-            />
-        }
-      
+        />
+        
+        <View style = {styles.flexRow}>
+            <FormTitle>Adulticida</FormTitle>
+        </View>
+
+        <TratamentosForm 
+        control = {control}
+        schema = {treatmentsSchema}
+        baseName={`adulticida`}
+        errors = {errors}
+        disabled={disabled}
+        />
+  
 
         <View style={styles.flexRow}>
           <UiButton

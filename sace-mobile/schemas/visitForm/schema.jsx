@@ -11,8 +11,8 @@ const enumField = (message = "Selecione um valor!") => {return {message: message
 
 const treatmentObject = () => 
     z.object({
-        tipo: z.enum(["Tipo A", "Tipo B", "Tipo C"], {message: "Selecione um valor!"}),
-        forma: z.enum(["Forma A", "Forma B", "Forma C"], {message: "Selecione um valor!"}),
+        tipo: z.string().optional(),
+        forma: z.string().optional(),
         quantidade: z.coerce.number(),
     });
 

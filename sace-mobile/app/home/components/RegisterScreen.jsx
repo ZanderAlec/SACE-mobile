@@ -27,7 +27,7 @@ function RegisterScreen() {
         
         {!loading && !error && registers && Array.isArray(registers) && registers.length > 0 && (
           registers.map((register) => (
-            <RegisterContainer key={register.id} register={register} />
+            <RegisterContainer key={register.id} register={register} onDelete={refetch} />
           ))
         )}
         
