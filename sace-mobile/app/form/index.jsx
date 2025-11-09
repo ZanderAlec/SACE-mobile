@@ -148,12 +148,18 @@ function FieldRegisterForm() {
       }
       
       // Build request body
+      // Use the actual status value from the form - don't use defaults
+      const imovel_status = endereco.status || null;
+      
+      console.log('Form status value:', endereco.status);
+      console.log('Status being sent:', imovel_status);
+      
       const requestBody = {
         imovel_numero: endereco.numeroImovel || '',
         imovel_lado: endereco.lado || '',
         imovel_categoria_da_localidade: endereco.categoriaLocalidade || '',
         imovel_tipo: endereco.tipoImovel || '',
-        imovel_status: endereco.status || '',
+        imovel_status: imovel_status, // Use actual form value, no default
         imovel_complemento: endereco.complemento || null,
         formulario_tipo: formulario_tipo || null,
         li: atividadesRealizadas.levantamentoIndice === true,
@@ -182,7 +188,7 @@ function FieldRegisterForm() {
       // Validate required fields
       if (!requestBody.imovel_numero || !requestBody.imovel_lado || !requestBody.imovel_categoria_da_localidade || 
           !requestBody.imovel_tipo || !requestBody.imovel_status || !requestBody.area_de_visita_id) {
-        Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios');
+        Alert.alert('Erro', 'Por favor, preencha todos os campos obrigatórios, incluindo o Status do imóvel');
         setIsSubmitting(false);
         return;
       }

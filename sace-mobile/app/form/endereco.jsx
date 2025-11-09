@@ -124,6 +124,9 @@ export default function Endereco({formHandler, register, area, isEditing = false
 
 
   useEffect(() => {
+    // Check if we already have form data - if so, preserve user's selections
+    const existingFormData = formData?.endereco;
+    
     // Prepare values object
     const values = {
       idArea: '',
@@ -134,8 +137,8 @@ export default function Endereco({formHandler, register, area, isEditing = false
       numeroImovel: '',
       lado: '',
       categoriaLocalidade: '',
-      tipoImovel: 'Residência',
-      status: 'Pendente',
+      tipoImovel: '',
+      status: '', // Don't set default - let user choose
       complemento: '',
     };
     
@@ -149,8 +152,8 @@ export default function Endereco({formHandler, register, area, isEditing = false
       values.logradouro = areaVisita.logradouro || areaVisita.logadouro || '';
     }
 
-    // Set values from register specifics if register exists
-    if (register) {
+    // Set values from register specifics if register exists (only on initial load)
+    if (register && !existingFormData) {
       if (specifics.numero) values.numeroImovel = String(specifics.numero);
     
       // Map lado - register has "Ímpar" but schema expects "ìmpar" (different character)
@@ -166,20 +169,39 @@ export default function Endereco({formHandler, register, area, isEditing = false
       // Map tipoImovel from imovel_tipo
       if (specifics.tipo) values.tipoImovel = specifics.tipo;
       
-      // Map status - register has "bloqueado" but schema expects "Inspecionado" or "Pendente"
+      // Map status from register - preserve the actual status value
       if (specifics.status) {
-        values.status = specifics.status.toLowerCase() === 'inspecionado' || specifics.status.toLowerCase() === 'bloqueado' 
-          ? 'Inspecionado' 
-          : 'Pendente';
+        // Map status values to match schema enum
+        const statusLower = specifics.status.toLowerCase();
+        if (statusLower === 'inspecionado' || statusLower === 'bloqueado') {
+          values.status = 'Inspecionado';
+        } else if (statusLower === 'pendente') {
+          values.status = 'Pendente';
+        } else if (statusLower === 'não inspecionado' || statusLower === 'nao inspecionado') {
+          values.status = 'Não inspecionado';
+        } else {
+          // Preserve the original status if it matches one of the enum values
+          values.status = specifics.status;
+        }
       }
+      
       if (specifics.complemento) values.complemento = specifics.complemento;
     }
     
-    // Reset form with all values at once (only if we have area or register data)
-    if (areaVisita || register) {
+    // If we have existing form data, preserve user's selections (especially status)
+    if (existingFormData) {
+      Object.keys(existingFormData).forEach(key => {
+        if (existingFormData[key] !== undefined && existingFormData[key] !== null && existingFormData[key] !== '') {
+          values[key] = existingFormData[key];
+        }
+      });
+    }
+    
+    // Reset form with all values at once (only if we have area or register data, and haven't initialized yet)
+    if ((areaVisita || register) && !existingFormData) {
       reset(values);
     }
-  }, [register, areaVisita, specifics, reset]);
+  }, [register, areaVisita, specifics, reset, formData]);
 
 
   const onSubmit = (data) => {
