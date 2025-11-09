@@ -286,7 +286,7 @@ export default function Endereco({formHandler, register, area, isEditing = false
           control = {control} 
           schema = {visitSchemaAdress}
           errors = {errors}
-          disabled = {true}
+          disabled = {false}
         />
 
      </View>
@@ -297,7 +297,7 @@ export default function Endereco({formHandler, register, area, isEditing = false
           control = {control} 
           schema = {visitSchemaAdress}
           errors = {errors}
-          disabled = {specifics.status ? disabled : true}
+          disabled = {false}
       />
 
       <FormTextInput 

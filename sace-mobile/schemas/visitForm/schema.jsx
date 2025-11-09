@@ -31,8 +31,8 @@ export const visitSchema = z.object({
 
     lado: z.enum(["ìmpar", "par"], enumField()),
     categoriaLocalidade: z.enum(["Urbana", "Rural"], enumField()),
-    tipoImovel: z.enum(["Residência"], enumField()),
-    status: z.enum(["Inspecionado", "Pendente"], enumField()),
+    tipoImovel: z.enum(["Residêncial", "Comercial", "Industrial", "Outros"], enumField()),
+    status: z.enum(["Inspecionado", "Pendente", "Bloqueado", "Não inspecionado"], enumField()),
     complemento: z.string().max(50).optional(),
 
     //Registro de controle da dengue
