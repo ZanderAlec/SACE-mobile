@@ -1,20 +1,17 @@
-import React from 'react'
-import { View, Text, StyleSheet, Pressable } from 'react-native'
-import { router } from 'expo-router'
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
-import Feather from '@expo/vector-icons/Feather';
-import Fontisto from '@expo/vector-icons/Fontisto';
+import { router } from 'expo-router';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 function AreaContainer({area, onPress, disabled = false}) {
    const {
     setor, 
-    agentes, 
+    agentes = [], 
     area_de_visita_id: id, 
     bairro, municipio, 
     logadouro: logradouro, 
     estado,
     status
-    } = area; 
+    } = area ?? {}; 
 
   const handlePress = () => {
     if (disabled) return;
@@ -73,7 +70,7 @@ function AreaContainer({area, onPress, disabled = false}) {
 
         <View style={styles.containerAreaItem}>
             <Text>Agente responsável</Text>
-            <Text style={styles.infoText}>{agentes[0].nome}</Text>
+            <Text style={styles.infoText}>{agentes?.[0]?.nome ?? 'Sem agente'}</Text>
         </View>        
      </Pressable>
   )

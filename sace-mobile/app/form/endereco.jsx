@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import {View, StyleSheet, Button} from 'react-native'
 import { useForm } from "react-hook-form";
+import { StyleSheet, View } from 'react-native';
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {visitSchema} from '../../schemas/visitForm/schema'
+import { visitSchema } from '../../schemas/visitForm/schema';
 
-import FormTextInput from '../../components/forms/FormTextInput'
-import FormPickerInput from '../../components/forms/FormPickerInput'
-import Title from '../../components/text/Title'
-import Subtitle from '../../components/text/Subtitle'
+import FormPickerInput from '../../components/forms/FormPickerInput';
+import FormTextInput from '../../components/forms/FormTextInput';
+import Subtitle from '../../components/text/Subtitle';
+import Title from '../../components/text/Title';
 
-import Divider from '@/components/general/Divider'
-import UiButton from '@/components/general/UiButton'
+import Divider from '@/components/general/Divider';
+import UiButton from '@/components/general/UiButton';
 
 import { useEffect } from 'react';
 
@@ -286,7 +286,7 @@ export default function Endereco({formHandler, register, area, isEditing = false
           control = {control} 
           schema = {visitSchemaAdress}
           errors = {errors}
-          disabled = {true}
+          disabled = {disabled}   // antes: disabled = {true}
         />
 
      </View>
