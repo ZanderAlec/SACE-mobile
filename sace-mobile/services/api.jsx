@@ -168,6 +168,13 @@ const registersApi = {
     async createRegister(formData) {
         try {
             console.log('createRegister called with:', formData);
+            
+            // Get auth token
+            const token = await AsyncStorage.getItem('authToken');
+            if (!token) {
+                throw new Error('No authentication token found. Please login again.');
+            }
+            
             // Use FormData for file upload support
             const data = new FormData();
             console.log('FormData instance created:', data instanceof FormData);
@@ -282,23 +289,35 @@ const registersApi = {
             console.log('FormData has _parts:', data._parts ? 'yes' : 'no');
             console.log('FormData has _streams:', data._streams ? 'yes' : 'no');
             
-            // Use axios with proper config for FormData
-            // Important: Don't let axios transform FormData - it should be sent as-is
-            const response = await api.post('/registro_de_campo', data, {
-                timeout: 60000, // 60 second timeout for file uploads
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
-                transformRequest: (data, headers) => {
-                    // If it's FormData, return it as-is (don't transform)
-                    if (data instanceof FormData || data._parts || data._streams) {
-                        return data;
-                    }
-                    // For other data types, use default JSON transformation
-                    return JSON.stringify(data);
+            // Use fetch instead of axios for FormData - more reliable in React Native
+            const url = `${API_URL}/registro_de_campo`;
+            console.log('Sending POST request with fetch to:', url);
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    // Don't set Content-Type - let fetch set it automatically with boundary for FormData
                 },
+                body: data,
             });
+            
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                const error = new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                error.response = {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: errorData,
+                };
+                throw error;
+            }
+            
+            const responseData = await response.json();
             console.log('Request successful:', response.status);
-            return response.data;
+            return responseData;
         } catch (error) {
             console.error('API Error Details:', {
                 message: error.message,
@@ -323,6 +342,12 @@ const registersApi = {
         try {
             console.log('updateRegister called with:', { registro_de_campo_id, formData });
             
+            // Get auth token
+            const token = await AsyncStorage.getItem('authToken');
+            if (!token) {
+                throw new Error('No authentication token found. Please login again.');
+            }
+            
             // Use FormData for file upload support
             const data = new FormData();
             
@@ -331,7 +356,13 @@ const registersApi = {
             data.append('imovel_lado', String(formData.imovel_lado || ''));
             data.append('imovel_categoria_da_localidade', String(formData.imovel_categoria_da_localidade || ''));
             data.append('imovel_tipo', String(formData.imovel_tipo || ''));
-            data.append('imovel_status', String(formData.imovel_status || ''));
+            // Status is required - ensure it's not null/undefined
+            if (formData.imovel_status) {
+                data.append('imovel_status', String(formData.imovel_status));
+            } else {
+                console.error('ERROR: imovel_status is missing! This is a required field.');
+                throw new Error('Status do imóvel é obrigatório');
+            }
             
             // ===== REQUIRED INTEGER FIELDS (*) =====
             data.append('area_de_visita_id', parseInt(formData.area_de_visita_id, 10));
@@ -353,21 +384,21 @@ const registersApi = {
             }
             
             // ===== OPTIONAL BOOLEAN FIELDS =====
-            // Only append if explicitly set (true or false)
+            // Only append if explicitly set (true or false) - send as strings
             if (formData.li !== undefined && formData.li !== null) {
-                data.append('li', formData.li === true);
+                data.append('li', String(formData.li === true));
             }
             if (formData.pe !== undefined && formData.pe !== null) {
-                data.append('pe', formData.pe === true);
+                data.append('pe', String(formData.pe === true));
             }
             if (formData.t !== undefined && formData.t !== null) {
-                data.append('t', formData.t === true);
+                data.append('t', String(formData.t === true));
             }
             if (formData.df !== undefined && formData.df !== null) {
-                data.append('df', formData.df === true);
+                data.append('df', String(formData.df === true));
             }
             if (formData.pve !== undefined && formData.pve !== null) {
-                data.append('pve', formData.pve === true);
+                data.append('pve', String(formData.pve === true));
             }
             
             // ===== OPTIONAL STRING FIELDS =====
@@ -436,16 +467,35 @@ const registersApi = {
                 }
             });
             
-            // Make PUT request to /registro_de_campo/{registro_de_campo_id}
-            // Note: Content-Type header is automatically handled by the axios interceptor for FormData
-            const response = await api.put(`/registro_de_campo/${registro_de_campo_id}`, data, {
-                timeout: 60000, // 60 second timeout for file uploads
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
+            // Use fetch instead of axios for FormData - more reliable in React Native
+            const url = `${API_URL}/registro_de_campo/${registro_de_campo_id}`;
+            console.log('Sending PUT request with fetch to:', url);
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    // Don't set Content-Type - let fetch set it automatically with boundary for FormData
+                },
+                body: data,
             });
             
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                const error = new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                error.response = {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: errorData,
+                };
+                throw error;
+            }
+            
+            const responseData = await response.json();
             console.log('Update request successful:', response.status);
-            return response.data;
+            return responseData;
         } catch (error) {
             console.error('API Error Details:', {
                 message: error.message,
