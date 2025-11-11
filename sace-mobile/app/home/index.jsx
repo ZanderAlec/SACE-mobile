@@ -14,6 +14,8 @@ import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 import Cycles from './components/Cycles';
+import logo from '@/assets/images/sace-logo.png'
+import { Image } from 'expo-image';
 
 function Home() {
   const [activeTab, setActiveTab] = useState('areas');
@@ -27,7 +29,6 @@ function Home() {
   }, [denuncias]);
   
  
-  
   // Check for new denuncias periodically (every 30 seconds)
   useEffect(() => {
     const interval = setInterval(() => {
@@ -52,8 +53,10 @@ function Home() {
 
   return (
     <SafeAreaView style={styles.container}>
-      
-      <Cycles setCycle={setCurrentCycle} SetYear={setCurrentYear} />
+            
+      <View style={styles.logoContainer}>
+        <Image source={logo} style={styles.logo}/>
+      </View>
 
       <View style={styles.containerButtons}>
         <Pressable style={[styles.tab, activeTab === tabs[0] && styles.selectedTab]} onPress={() => handleTabPress(tabs[0])}>
@@ -94,10 +97,10 @@ function Home() {
           }
         </Pressable>
       </View>
-
-    {/*Search*/}
-      {/* <View style={styles.containerContent}></View> */}
-
+      { 
+         activeTab !== tabs[3] &&
+        <Cycles setCycle={setCurrentCycle} SetYear={setCurrentYear} />
+      }
       {/* Areas Content */}
       {activeTab === tabs[0] && <AreaScreen />}
       {activeTab === tabs[1] && <RegisterScreen selectedYear={currentYear} selectedCycle={currentCycle} />}
@@ -120,6 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
+    marginHorizontal: 16,
     borderRadius: 10,
     justifyContent: 'center',
 
@@ -152,6 +156,16 @@ const styles = StyleSheet.create({
     padding: 12,
     textAlign: 'center',
     color: '#666',
+  },
+
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  logo: {
+    width: 150,
+    height: 60,
+    resizeMode: 'contain',
   },
 })
 

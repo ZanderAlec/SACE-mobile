@@ -45,7 +45,7 @@ function AreaContainer({area, onPress, disabled = false}) {
   };
 
   return (
-    <Pressable style={styles.containerAreas} onPress={handlePress} disabled={disabled}>
+    <Pressable style={styles.containerAreas} disabled={disabled}>
       <View style={styles.infoContainer}>
         <View style={styles.containerAreaItemFirst}>
             <Text style={styles.labelText}>Setor</Text>
@@ -73,9 +73,11 @@ function AreaContainer({area, onPress, disabled = false}) {
         </View>       
       </View> 
 
-      <View style={styles.arrowContainer}>
-        <MaterialIcons name="arrow-forward-ios" size={24} color="#3B67CE" />
-      </View>
+
+      <Pressable style={styles.openImoveisContainer} onPress={handlePress} >
+        <Text style={styles.openImoveisText}>Abrir lista de imóveis</Text>
+        <MaterialIcons name="arrow-forward-ios" size={24} color="white" />
+      </Pressable>
      </Pressable>
   )
 }
@@ -85,9 +87,8 @@ const styles = StyleSheet.create({
   containerButtons: {
     flexDirection: 'row',
     gap: 10,
-    paddingBlock: 5,
+    paddingTop: 5,
     paddingHorizontal: 10,
-    paddingInline: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -97,28 +98,35 @@ const styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
     justifyContent: 'space-between',
-    paddingRight: 32,
     minWidth: 0,
   },
-  
-  arrowContainer: {
-    position: 'absolute',
-    right: 16,
-    top: '50%',
-    transform: [{ translateY: -12 }],
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
+
+  openImoveisContainer:{
+    flexDirection: 'row',
+    padding: 16,
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: "#3B67CE",
+    borderRadius: 10,
+    gap: 8,
+    marginTop: 8,
   },
+  
+  openImoveisText:{
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+
+  
+
 
   containerAreas: {
     marginTop: 24,
     backgroundColor: 'white',
     borderRadius: 10,
     paddingHorizontal: 16,
-    paddingBlock: 16,
-    flexDirection: 'row',
+    paddingTop: 16,
     position: 'relative',
     overflow: 'hidden',
   },

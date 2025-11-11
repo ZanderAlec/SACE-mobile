@@ -3,11 +3,8 @@ import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, router } from 'expo-router'
 import { useFocusEffect } from '@react-navigation/native'
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Feather from '@expo/vector-icons/Feather'
-import Fontisto from '@expo/vector-icons/Fontisto'
-import AreaContainer from './areaContainer'
-import Title from '@/components/text/Title'
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 import { areasApi } from '@/services/api'
 import Imovel from './imovel'
@@ -139,7 +136,8 @@ function ImoveisList() {
                         }
                     })}
                 >
-                    <Text style={styles.addButtonText}>Novo registro</Text>
+                    <AntDesign name="plus" size={24} color="white" />
+                    <Text style={styles.addButtonText}>Registrar sem endereço</Text>
                 </Pressable>
 
 
@@ -323,12 +321,10 @@ const styles = StyleSheet.create({
     },
 
     header:{
-        flexDirection: 'row',
         gap: 12,
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         marginTop: 16,
-        flexWrap: 'wrap',
         backgroundColor: 'white',
         padding: 16,
         borderRadius: 10,

@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 8,
+    // paddingTop: 10,
+    // paddingBottom: 8,
   },
   searchInputContainer: {
     flexDirection: 'row',
@@ -123,10 +123,12 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexGrow: 1,
+    paddingHorizontal: 16,
+    paddingTop: 8,
     paddingBottom: 20,
   },
   loadingContainer: {
-    flex: 1,
+    minHeight: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   errorContainer: {
-    flex: 1,
+    minHeight: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   emptyContainer: {
-    flex: 1,
+    minHeight: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
@@ -183,11 +185,11 @@ const styles = StyleSheet.create({
   },
 
   sectionTitle:{
-    paddingHorizontal: 16,
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333153',
     marginTop: 16,
+    marginBottom: 8,
   }
 
   

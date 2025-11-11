@@ -33,13 +33,12 @@ function Imovel({ imovel, area, onPress, index }) {
             <View style={styles.imovelContent}>
            
             <View style={styles.containerButtons}>
+
                 <Pressable onPress={handleDeletePress}>
                  <MaterialCommunityIcons name="delete-outline" size={24} color="#ED1B24" />
                 </Pressable>
 
-                <Pressable onPress={handleEditPress}>
-                <Feather name="plus" size={24} color="#3B67CE" />
-                </Pressable>
+               
             </View>
 
             <View style={styles.imovelHeader}>
@@ -68,15 +67,18 @@ function Imovel({ imovel, area, onPress, index }) {
                 }
                 
             </View>
+
+            <Pressable style={styles.editButton} onPress={handleEditPress} >
+                <Text style={styles.editButtonText}>Registrar neste imóvel</Text>
+                <MaterialCommunityIcons name="file-document-arrow-right-outline" size={16} color="white" />
+            </Pressable>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     imovelItem: {
-        flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
         backgroundColor: 'white',
         padding: 16,
         borderRadius: 10,
@@ -138,7 +140,24 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#DEE6F7',
         padding: 10,
-    }
+    },
+
+    editButton:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+        backgroundColor: '#3B67CE',
+        padding: 12,
+        borderRadius: 8,
+        marginTop: 10,
+    },
+
+    editButtonText:{
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '500',
+    },
 
 });
 

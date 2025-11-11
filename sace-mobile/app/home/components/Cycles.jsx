@@ -109,6 +109,7 @@ function Cycles({setCycle, SetYear}) {
 
 const styles = StyleSheet.create({
     cycles: {
+        marginHorizontal: 8,
         marginBottom: 10,
         padding: 8,
         flexDirection: 'row',

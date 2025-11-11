@@ -53,6 +53,7 @@ function AreaScreen() {
 
   return (
     <View style={styles.container}>
+
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
           <FontAwesome name="search" size={18} color="#72777B" style={styles.searchIcon} />
@@ -109,8 +110,8 @@ const styles = StyleSheet.create({
     },
     searchContainer: {
       paddingHorizontal: 16,
-      paddingTop: 10,
-      paddingBottom: 8,
+      // paddingTop: 10,
+      // paddingBottom: 8,
     },
     searchInputContainer: {
       flexDirection: 'row',
@@ -135,6 +136,8 @@ const styles = StyleSheet.create({
     },
     scrollViewContent: {
       flexGrow: 1,
+      paddingHorizontal: 16,
+      paddingTop: 8,
       paddingBottom: 20,
     },
     containerButtons: {
@@ -151,7 +154,7 @@ const styles = StyleSheet.create({
       padding: 10,
     },
     loadingContainer: {
-      flex: 1,
+      minHeight: '100%',
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
@@ -162,7 +165,7 @@ const styles = StyleSheet.create({
       color: '#666',
     },
     errorContainer: {
-      flex: 1,
+      minHeight: '100%',
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
     },
     emptyContainer: {
-      flex: 1,
+      minHeight: '100%',
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,

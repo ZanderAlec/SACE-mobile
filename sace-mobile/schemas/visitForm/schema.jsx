@@ -31,7 +31,7 @@ export const visitSchema = z.object({
 
     lado: z.enum(["ìmpar", "par"], enumField()),
     categoriaLocalidade: z.enum(["Urbana", "Rural"], enumField()),
-    tipoImovel: z.enum(["Residêncial", "Comercial", "Industrial", "Outros"], enumField()),
+    tipoImovel: z.enum(["Residência","Residêncial", "Comercial", "Industrial", "Outros"], enumField()),
     status: z.enum(["Inspecionado", "Pendente", "Bloqueado", "Não inspecionado"], enumField()),
     complemento: z.string().max(50).optional(),
 
