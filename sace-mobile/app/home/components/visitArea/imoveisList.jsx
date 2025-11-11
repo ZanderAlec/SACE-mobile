@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useLocalSearchParams, router } from 'expo-router'
+import { useFocusEffect } from '@react-navigation/native'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Feather from '@expo/vector-icons/Feather'
 import Fontisto from '@expo/vector-icons/Fontisto'
 import AreaContainer from './areaContainer'
 import Title from '@/components/text/Title'
+
 import { areasApi } from '@/services/api'
 import Imovel from './imovel'
 
@@ -17,46 +19,59 @@ function ImoveisList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    console.log("params",params);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            if (params.area) {
-                try {
-                    const parsedArea = JSON.parse(params.area);
-                    setArea(parsedArea);
-                    console.log("area", parsedArea);
-                    
-                    // Fetch imoveis (registros) from API using area_de_visita_id
-                    if (parsedArea.area_de_visita_id) {
-                        setLoading(true);
-                        try {
-                            const registros = await areasApi.getRegistrosByArea(parsedArea.area_de_visita_id);
-                            setImoveis(registros || []);
-                            setError(null);
-                            console.log('registros', registros);
-                        } catch (err) {
-                            if(err.response.status === 404) {
-                                setError({message: 'Nenhum imóvel registrado no ciclo atual'});
-                            }else{
-                                setError({message: 'Problemas ao carregar imóveis, tente novamente mais tarde'});
-                            }
-                            setImoveis([]);
-                        }
-                    } else {
-                        setImoveis([]);
-                    }
-                } catch (error) {
-                    console.error('Error parsing area parameter:', error);
-                    setError(error);
-                } finally {
-                    setLoading(false);
-                }
+    // Extract fetch logic into a reusable function
+    const fetchImoveis = useCallback(async () => {
+        if (!area || !area.area_de_visita_id) {
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const registros = await areasApi.getRegistrosByArea(area.area_de_visita_id);
+            setImoveis(registros || []);
+            setError(null);
+        } catch (err) {
+            if(err.response?.status === 404) {
+                setError({message: 'Nenhum imóvel registrado no ciclo atual'});
+            }else{
+                setError({message: 'Problemas ao carregar imóveis, tente novamente mais tarde'});
             }
-        };
+            setImoveis([]);
+        } finally {
+            setLoading(false);
+        }
+    }, [area]);
 
-        fetchData();
+    // Initial load - parse area and set it
+    useEffect(() => {
+        if (params.area) {
+            try {
+                const parsedArea = JSON.parse(params.area);
+                setArea(parsedArea);
+            } catch (error) {
+                console.error('Error parsing area parameter:', error);
+                setError(error);
+                setLoading(false);
+            }
+        }
     }, [params.area]);
+
+    // Fetch imoveis when area is set
+    useEffect(() => {
+        if (area && area.area_de_visita_id) {
+            fetchImoveis();
+        }
+    }, [area, fetchImoveis]);
+
+    // Refetch when screen comes into focus (e.g., after returning from form submission)
+    useFocusEffect(
+        useCallback(() => {
+            if (area && area.area_de_visita_id) {
+                fetchImoveis();
+            }
+        }, [area, fetchImoveis])
+    );
 
     const handleImovelPress = (register) => {
         // Navigate to form with register data (for editing)
@@ -189,19 +204,21 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f2f6fe',
-        paddingHorizontal: 16,
         paddingBlock: 24,
+        
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#f2f6fe',
+        
     },
     loadingText: {
         marginTop: 16,
         fontSize: 16,
         color: '#72777B',
+        
     },
     errorContainer: {
         flex: 1,
@@ -209,6 +226,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#f2f6fe',
         padding: 16,
+        
     },
     errorMessageContainer: {
         backgroundColor: 'white',
@@ -244,6 +262,7 @@ const styles = StyleSheet.create({
         backgroundColor: '',
     },
     sectionTitle: {
+        paddingHorizontal: 16,
         fontSize: 20,
         fontWeight: 'bold',
         color: '#333153',
@@ -262,9 +281,13 @@ const styles = StyleSheet.create({
     },
     addButton: {
         backgroundColor: '#3B67CE',
-        paddingHorizontal: 8,
+        paddingHorizontal: 12,
         paddingVertical: 12,
         borderRadius: 8,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        flexShrink: 0,
     },
     addButtonText: {
         color: 'white',
@@ -301,20 +324,27 @@ const styles = StyleSheet.create({
 
     header:{
         flexDirection: 'row',
-        gap: 24,
+        gap: 12,
         alignItems: 'center',
-        alignContent: 'center',
+        justifyContent: 'space-between',
+        marginTop: 16,
+        flexWrap: 'wrap',
+        backgroundColor: 'white',
+        padding: 16,
+        borderRadius: 10,
     },  
 
     headerTitle: {
         fontSize: 20,
-        marginTop: 16,
+        flex: 1,
+        flexShrink: 1,
     },
 
     backButtonContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
+        gap: 8, 
+        paddingHorizontal: 16,
     },
 });
 

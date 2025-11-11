@@ -21,8 +21,16 @@ export default function FormPickerInput({label, subLabel, control, name, schema,
     const fieldSchema = name.includes('.') ? getNestedField(schema, name) : schema.shape[name];
     const fieldError = getNestedError(errors, name);
 
-    const baseOptions = fieldSchema?._def?.values || [];
-    const isRequired = !(fieldSchema instanceof z.ZodOptional);
+    // Handle ZodOptional - extract the inner schema
+    let enumSchema = fieldSchema;
+    if (fieldSchema?._def?.typeName === 'ZodOptional' || fieldSchema instanceof z.ZodOptional) {
+        enumSchema = fieldSchema._def?.innerType || fieldSchema._def?.schema || fieldSchema;
+    }
+    
+    // Extract enum values from the schema
+    const baseOptions = enumSchema?._def?.values || fieldSchema?._def?.values || [];
+    const isRequired = !(fieldSchema instanceof z.ZodOptional) && fieldSchema?._def?.typeName !== 'ZodOptional';
+    
 
     
 

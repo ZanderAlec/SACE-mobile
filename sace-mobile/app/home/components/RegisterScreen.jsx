@@ -5,37 +5,58 @@ import { useAuth } from '@/contexts/AuthContext';
 import RegisterContainer from './registerContainer';
 import { ScrollView, ActivityIndicator, Pressable } from 'react-native';
 
-function RegisterScreen() {
+function RegisterScreen({ selectedYear, selectedCycle }) {
     const { registers, loading, error, refetch } = useRegisters();
     const { userInfo } = useAuth();
     
-    // Filter registers based on matching nome_completo with agente_nome
+    // Filter registers based on matching nome_completo with agente_nome and cycle/year
     const filteredRegisters = useMemo(() => {
-        console.log('registers', registers);
-        console.log('userInfo', userInfo);
-        
-        if (!registers || !Array.isArray(registers) || !userInfo?.nome_completo) {
-            return registers || [];
+        if (!registers || !Array.isArray(registers)) {
+            return [];
         }
         
-        const userNome = userInfo.nome_completo.trim();
-        console.log('Filtering registers for user:', userNome);
+        let filtered = registers;
+        console.log(registers);
         
-        return registers.filter((register) => {
-            // Check if register has agente_nome and if it matches user nome_completo
-            const agenteNome = register.agente_nome?.trim();
-            
-            if (agenteNome && agenteNome === userNome) {
-                console.log('Register matched:', register.registro_de_campo_id || register.id);
-                return true;
-            }
-            
-            return false;
-        });
-    }, [registers, userInfo?.nome_completo]);
+        // Filter by user nome_completo if available
+        if (userInfo?.nome_completo) {
+            const userNome = userInfo.nome_completo.trim();
+            filtered = filtered.filter((register) => {
+                const agenteNome = register.agente_nome?.trim();
+                return agenteNome && agenteNome === userNome;
+            });
+        }
+        
+        // Filter by selected year and cycle if both are provided
+        if (selectedYear && selectedCycle) {
+            filtered = filtered.filter((register) => {
+                if (!register.ciclo) {
+                    return false;
+                }
+                
+                // Get year and cycle from ciclo object
+                const registerYear = register.ciclo.ano;
+                const registerCycle = register.ciclo.ciclo;
+                
+                // Check if both exist
+                if (registerYear === undefined || registerYear === null || registerCycle === undefined || registerCycle === null) {
+                    return false;
+                }
+                
+                // Compare year and cycle (convert both to string for comparison)
+                const registerYearStr = String(registerYear);
+                const registerCycleStr = String(registerCycle);
+                const selectedYearStr = String(selectedYear);
+                const selectedCycleStr = String(selectedCycle);
+                
+                return registerYearStr === selectedYearStr && registerCycleStr === selectedCycleStr;
+            });
+        }
+        
+        return filtered;
+    }, [registers, userInfo?.nome_completo, selectedYear, selectedCycle]);
     
-    console.log('Total registers:', registers?.length || 0);
-    console.log('Filtered registers:', filteredRegisters.length);
+ 
     
    return (<ScrollView style={styles.scrollView}>
         {loading && (

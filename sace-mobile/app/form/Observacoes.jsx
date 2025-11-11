@@ -15,7 +15,6 @@ const obsSchema = visitSchema.pick({
 });
 
 function Observacoes({formHandler, register, isEditing = false}) {
-  console.log('Register in Observacoes:', register);
 
   const {
     observacao,
@@ -53,8 +52,7 @@ function Observacoes({formHandler, register, isEditing = false}) {
     }, [register, observacao, reset]);
 
     const onSubmit = (data) => {
-        console.log("dados:", data);
-        console.log("errors: ", errors);
+      
         
         if (Object.keys(errors).length === 0) {
             // Save the validated data

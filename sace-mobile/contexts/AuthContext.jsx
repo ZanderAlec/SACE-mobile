@@ -26,8 +26,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const storedToken = await AsyncStorage.getItem('authToken');
       const storedUserInfo = await AsyncStorage.getItem('userInfo');
-      console.log('checkStoredToken - storedToken:', storedToken ? 'exists' : 'null');
-      console.log('checkStoredToken - storedUserInfo:', storedUserInfo);
       
       if (storedToken) {
         setToken(storedToken);
@@ -35,7 +33,6 @@ export const AuthProvider = ({ children }) => {
         if (storedUserInfo) {
           try {
             const parsedUserInfo = JSON.parse(storedUserInfo);
-            console.log('Parsed userInfo from storage:', parsedUserInfo);
             setUserInfo(parsedUserInfo);
           } catch (e) {
             console.error('Error parsing stored user info:', e);
@@ -58,13 +55,10 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       
       // Store user info if provided
-      console.log('AuthContext login - userData received:', userData);
       if (userData) {
         const userInfoString = JSON.stringify(userData);
-        console.log('Storing userInfo to AsyncStorage:', userInfoString);
         await AsyncStorage.setItem('userInfo', userInfoString);
         setUserInfo(userData);
-        console.log('UserInfo set in state:', userData);
       } else {
         console.warn('No userData provided to login function');
       }

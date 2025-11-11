@@ -19,7 +19,6 @@ const treatmentsSchema = visitSchema.pick({
 
 
 function Tratamentos({formHandler, register, isEditing = false}) {
-  console.log('Register in Tratamentos:', register);
 
   const {
     larvicidas,
@@ -57,9 +56,7 @@ function Tratamentos({formHandler, register, isEditing = false}) {
         },
     });
 
-    useEffect(() => {
-       console.log(errors)
-    }, [errors]);
+
 
     useEffect(() => {
       if (formData && formData['tratamentos']) {
@@ -87,7 +84,6 @@ function Tratamentos({formHandler, register, isEditing = false}) {
         // Set larvicida from first item in larvicidas array
         if (larvicidas && larvicidas.length > 0) {
           const larvicida = larvicidas[0];
-          console.log('Setting larvicida:', larvicida);
           setLarvFormVisible(true);
           if (larvicida.tipo) values.larvicida.tipo = larvicida.tipo;
           if (larvicida.forma) values.larvicida.forma = larvicida.forma;
@@ -97,7 +93,6 @@ function Tratamentos({formHandler, register, isEditing = false}) {
         // Set adulticida from first item in adulticidas array
         if (adulticidas && adulticidas.length > 0) {
           const adulticida = adulticidas[0];
-          console.log('Setting adulticida:', adulticida);
           setAdultFormVisible(true);
           if (adulticida.tipo) values.adulticida.tipo = adulticida.tipo;
           if (adulticida.forma) values.adulticida.forma = adulticida.forma;
@@ -109,9 +104,7 @@ function Tratamentos({formHandler, register, isEditing = false}) {
     }, [register, larvicidas, adulticidas, reset]);
 
     const onSubmit = (data) => {
-        console.log("dados:", data);
-        console.log("errors: ", errors);
-        
+    
         if (Object.keys(errors).length === 0) {
             // Save the validated data
             saveFormData(data, 'tratamentos');

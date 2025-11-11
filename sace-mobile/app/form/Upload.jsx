@@ -19,7 +19,6 @@ const uploadSchema = visitSchema.pick({
 });
 
 function Upload({formHandler, register, isEditing = false}) {
-  console.log('Register in Upload:', register);
 
   const {
     arquivos,
@@ -94,9 +93,7 @@ function Upload({formHandler, register, isEditing = false}) {
     }, [register, arquivos, reset]);
 
     const onSubmit = async (data) => {
-        console.log("dados:", data);
-        console.log("errors: ", errors);
-        
+      
         if (Object.keys(errors).length === 0) {
             // Save the validated data
             saveFormData(data, 'upload');

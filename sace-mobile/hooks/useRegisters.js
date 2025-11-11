@@ -18,7 +18,6 @@ export const useRegisters = () => {
         throw new Error('No authentication token found. Please login again.');
       }
       
-      console.log('Fetching registers with token:', token ? 'Token present' : 'No token');
       const data = await registersApi.getRegisters();
       setRegisters(data);
     } catch (err) {

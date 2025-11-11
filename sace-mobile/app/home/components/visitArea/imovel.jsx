@@ -3,7 +3,6 @@ import { Pressable, Text, StyleSheet, View } from 'react-native'
 import { router } from 'expo-router'
 import Feather from '@expo/vector-icons/Feather'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
-import Fontisto from '@expo/vector-icons/Fontisto';
 
 function Imovel({ imovel, area, onPress, index }) {
     const {
@@ -38,10 +37,10 @@ function Imovel({ imovel, area, onPress, index }) {
                  <MaterialCommunityIcons name="delete-outline" size={24} color="#ED1B24" />
                 </Pressable>
 
-                    <Pressable onPress={handleEditPress}>
-                        <Feather name="edit-2" size={24} color="black" />
-                    </Pressable>
-                </View>
+                <Pressable onPress={handleEditPress}>
+                <Feather name="plus" size={24} color="#3B67CE" />
+                </Pressable>
+            </View>
 
             <View style={styles.imovelHeader}>
                 <Text style={styles.imovelTitle}>{numero ? `Imóvel ${numero}` : `Registro ${index !== undefined ? index + 1 : id || ''}`}</Text>
@@ -49,12 +48,12 @@ function Imovel({ imovel, area, onPress, index }) {
             </View>
                 
                 <View style={styles.containerAreaItem}>
-                    <Text style={styles.imovelSubtitle}>Lado: </Text>
+                    <Text style={styles}>Lado: </Text>
                     <Text style={styles.infoText}>{lado}</Text>
                 </View>
                 
                     <View style={styles.containerAreaItem}>
-                        <Text style={styles.imovelSubtitle}>Tipo: </Text>
+                        <Text style={styles}>Tipo: </Text>
                         <Text style={styles.infoText}>{tipo}</Text>
                     </View>
                 
@@ -62,7 +61,7 @@ function Imovel({ imovel, area, onPress, index }) {
                 {
                     complemento && (
                     <View style={styles.containerAreaItem}>
-                        <Text style={styles.imovelSubtitle}>Complemento: </Text>
+                        <Text style={styles}>Complemento: </Text>
                         <Text style={styles.infoText}>{complemento}</Text>
                     </View>
                     )
@@ -100,10 +99,10 @@ const styles = StyleSheet.create({
         color: '#333153',
         marginBottom: 4,
     },
-    imovelSubtitle: {
+    infoText: {
+        paddingLeft: 30,
         fontSize: 14,
         color: '#72777B',
-        marginTop: 2,
     },
 
     status: {

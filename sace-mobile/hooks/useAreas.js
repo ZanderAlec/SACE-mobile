@@ -18,7 +18,6 @@ export const useAreas = () => {
         throw new Error('No authentication token found. Please login again.');
       }
       
-      console.log('Fetching areas with token:', token ? 'Token present' : 'No token');
       const data = await areasApi.getAreas();
       setAreas(data);
     } catch (err) {

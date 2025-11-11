@@ -33,13 +33,9 @@ const visitSchemaAdress = visitSchema.pick({
 });
 
 export default function Endereco({formHandler, register, area, isEditing = false}) {
-  console.log('Register in Endereco:', register);
-  console.log('Area in Endereco:', area);
   
   // Get area_de_visita from area prop or from register
   const [areaVisita, setAreaVisita] = useState(area || register?.area_de_visita || null);
-  console.log('AreaVisita in Endereco:', areaVisita);
-  console.log('Logradouro property:', areaVisita?.logradouro, 'Logadouro property:', areaVisita?.logadouro);
 
   // Update areaVisita when area or register changes
   useEffect(() => {

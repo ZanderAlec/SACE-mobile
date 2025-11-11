@@ -11,14 +11,12 @@ function AreaScreen() {
   // Filter areas based on matching nome_completo with agent nome
   const filteredAreas = useMemo(() => {
 
-    console.log('areas', areas);
-    console.log('userInfo', userInfo);
+ 
     if (!areas || !Array.isArray(areas) || !userInfo?.nome_completo) {
       return areas || [];
     }
     
     const userNome = userInfo.nome_completo.trim();
-    console.log('Filtering areas for user:', userNome);
     
     return areas.filter((area) => {
       // Check if area has agentes array and if any agent nome matches user nome_completo
@@ -28,9 +26,7 @@ function AreaScreen() {
           return agentNome && agentNome === userNome;
         });
         
-        if (hasMatchingAgent) {
-          console.log('Area matched:', area.area_de_visita_id, area.setor);
-        }
+
         
         return hasMatchingAgent;
       }
@@ -40,8 +36,7 @@ function AreaScreen() {
     });
   }, [areas, userInfo?.nome_completo]);
   
-  console.log('Total areas:', areas?.length || 0);
-  console.log('Filtered areas:', filteredAreas.length);
+
 
   return (<ScrollView style={styles.scrollView}>
         {loading && (

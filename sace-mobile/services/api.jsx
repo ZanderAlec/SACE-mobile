@@ -509,5 +509,115 @@ const registersApi = {
     },
 }
 
+const cyclesApi = {
+    async getCycles() {
+        try {
+            const response = await api.get('/anos_ciclos');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+}
+
+const denunciasApi = {
+    async getDenuncias() {
+        try {
+            const response = await api.get('/denuncia');
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    async updateDenuncia(denunciaId, formData) {
+        try {
+            console.log('updateDenuncia called with:', denunciaId, formData);
+            const token = await AsyncStorage.getItem('authToken');
+            if (!token) {
+                throw new Error('No authentication token found. Please login again.');
+            }
+            
+            // Prepare the request body - only include fields that have values
+            const requestBody = {};
+            if (formData.rua_avenida) requestBody.rua_avenida = formData.rua_avenida;
+            if (formData.numero !== undefined && formData.numero !== null && formData.numero !== '') {
+                requestBody.numero = typeof formData.numero === 'string' ? parseInt(formData.numero, 10) : formData.numero;
+            }
+            if (formData.bairro) requestBody.bairro = formData.bairro;
+            if (formData.tipo_imovel) requestBody.tipo_imovel = formData.tipo_imovel;
+            if (formData.endereco_complemento) requestBody.endereco_complemento = formData.endereco_complemento;
+            if (formData.data_denuncia) requestBody.data_denuncia = formData.data_denuncia;
+            if (formData.hora_denuncia) requestBody.hora_denuncia = formData.hora_denuncia;
+            if (formData.observacoes) requestBody.observacoes = formData.observacoes;
+            if (formData.status) requestBody.status = formData.status;
+            if (formData.agente_responsavel_id !== undefined && formData.agente_responsavel_id !== null) {
+                requestBody.agente_responsavel_id = typeof formData.agente_responsavel_id === 'string' ? parseInt(formData.agente_responsavel_id, 10) : formData.agente_responsavel_id;
+            }
+            if (formData.files && Array.isArray(formData.files) && formData.files.length > 0) {
+                requestBody.files = formData.files;
+            }
+            
+            const url = `${API_URL}/denuncia/${denunciaId}`;
+            console.log('Sending PUT request with fetch to:', url);
+            console.log('Request body:', requestBody);
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                const error = new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                error.response = { status: response.status, statusText: response.statusText, data: errorData };
+                throw error;
+            }
+            
+            const responseData = await response.json();
+            return responseData;
+        } catch (error) {
+            console.error('API Error Details:', { message: error.message, response: error.response?.data, status: error.response?.status, statusText: error.response?.statusText });
+            throw error;
+        }
+    },
+    async deleteDenuncia(denunciaId) {
+        try {
+            console.log('deleteDenuncia called with:', denunciaId);
+            const token = await AsyncStorage.getItem('authToken');
+            if (!token) {
+                throw new Error('No authentication token found. Please login again.');
+            }
+            
+            const url = `${API_URL}/denuncia/${denunciaId}`;
+            console.log('Sending DELETE request with fetch to:', url);
+            
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                const error = new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                error.response = { status: response.status, statusText: response.statusText, data: errorData };
+                throw error;
+            }
+            
+            // DELETE requests might not return a body
+            const responseData = response.status === 204 ? {} : await response.json().catch(() => ({}));
+            return responseData;
+        } catch (error) {
+            console.error('API Error Details:', { message: error.message, response: error.response?.data, status: error.response?.status, statusText: error.response?.statusText });
+            throw error;
+        }
+    },
+}
+
 export default authApi;
-export { areasApi, registersApi, api };
+export { areasApi, registersApi, denunciasApi, cyclesApi, api };

@@ -4,7 +4,6 @@ import {Text, StyleSheet} from 'react-native'
 function Error({error, style}) {
   if (!error) return null;
   
-  console.log(error);
     return (
         <Text style={[styles.error, style]}>{error.message}</Text>
     )

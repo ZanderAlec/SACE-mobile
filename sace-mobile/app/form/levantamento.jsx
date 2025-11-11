@@ -24,7 +24,6 @@ const settingSchema = visitSchema.pick({
 
 
 function Levantamento({formHandler, register, isEditing = false}) {
-  console.log('Register in Levantamento:', register);
 
   const {
     df,
@@ -114,8 +113,6 @@ function Levantamento({formHandler, register, isEditing = false}) {
   }, [register, df, li, pe, pve, deposito, reset]);
 
   const onSubmit = (data) => {
-    console.log("dados:", data);
-    console.log("errors: ", errors);
     
     if (Object.keys(errors).length === 0) {
       saveFormData(data, 'levantamento');

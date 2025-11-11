@@ -15,7 +15,6 @@ const samplesSchema = visitSchema.pick({
 });
 
 function ColetaAmostras({formHandler, register, isEditing = false}) {
-  console.log('Register in ColetaAmostras:', register);
 
   const {
     numero_da_amostra,
@@ -64,8 +63,6 @@ function ColetaAmostras({formHandler, register, isEditing = false}) {
     }, [register, numero_da_amostra, quantiade_tubitos, reset]);
 
     const onSubmit = (data) => {
-        console.log("dados:", data);
-        console.log("errors: ", errors);
         
         if (Object.keys(errors).length === 0) {
             saveFormData(data.coletaAmostras, 'coletaAmostras');
@@ -73,7 +70,6 @@ function ColetaAmostras({formHandler, register, isEditing = false}) {
         }
     };  
 
-    // console.log(errors.coletaAmostras);
 
   return (
     <View style={{ flexDirection: 'column' }}>

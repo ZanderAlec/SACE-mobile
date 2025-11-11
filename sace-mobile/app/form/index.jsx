@@ -4,9 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useLocalSearchParams, router } from 'expo-router'
 
 import Ionicons from '@expo/vector-icons/Ionicons';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import Feather from '@expo/vector-icons/Feather';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 import Divider from '@/components/general/Divider'
 
@@ -52,7 +50,6 @@ function FieldRegisterForm() {
       try {
         const parsed = typeof area === 'string' ? JSON.parse(area) : area;
         setParsedArea(parsed);
-        console.log("Area received in form:", parsed);
       } catch (error) {
         console.error('Error parsing area parameter:', error);
       }
@@ -63,7 +60,6 @@ function FieldRegisterForm() {
       try {
         const parsed = typeof register === 'string' ? JSON.parse(register) : register;
         setParsedRegister(parsed);
-        console.log("Register received in form:", parsed);
       } catch (error) {
         console.error('Error parsing register parameter:', error);
       }
@@ -151,8 +147,7 @@ function FieldRegisterForm() {
       // Use the actual status value from the form - don't use defaults
       const imovel_status = endereco.status || null;
       
-      console.log('Form status value:', endereco.status);
-      console.log('Status being sent:', imovel_status);
+    
       
       const requestBody = {
         imovel_numero: endereco.numeroImovel || '',
@@ -183,7 +178,6 @@ function FieldRegisterForm() {
         files: files
       };
       
-      console.log('Submitting form data:', requestBody);
       
       // Validate required fields
       if (!requestBody.imovel_numero || !requestBody.imovel_lado || !requestBody.imovel_categoria_da_localidade || 
@@ -197,7 +191,6 @@ function FieldRegisterForm() {
       if (isUpdating) {
         // Update existing register using PUT
         response = await registersApi.updateRegister(registroId, requestBody);
-        console.log('Register updated successfully:', response);
         Alert.alert('Sucesso', 'Registro atualizado com sucesso!', [
           {
             text: 'OK',
@@ -207,7 +200,6 @@ function FieldRegisterForm() {
       } else {
         // Create new register using POST
         response = await registersApi.createRegister(requestBody);
-        console.log('Register created successfully:', response);
         Alert.alert('Sucesso', 'Registro criado com sucesso!', [
           {
             text: 'OK',
@@ -231,8 +223,6 @@ function FieldRegisterForm() {
       ...prev,
       [stepName]: stepData
     }));
-    console.log(`Saved data for step ${stepName}:`, stepData);
-    console.log("All form data so far:", { ...formData, [stepName]: stepData });
   }
 
   const formHandler = {
@@ -268,24 +258,10 @@ function FieldRegisterForm() {
       keyboardShouldPersistTaps="handled"
     >
     <View >
-      {/* Back and Logout Buttons */}
-      {/* <View style={styles.logoutContainer}>
-        <Pressable style={styles.backButton} onPress={handleBack}>
-          <Ionicons name="arrow-back" size={20} color="white" />
-          <Text style={styles.backText}>Voltar</Text>
-        </Pressable>
-        <Pressable style={styles.logoutButton} onPress={logout}>
-          <Ionicons name="log-out-outline" size={20} color="white" />
-          <Text style={styles.logoutText}>Sair</Text>
-        </Pressable>
-      </View> */}
-
-      <View style={styles.editDeleteContainer}>
-        <Pressable onPress={handleEdit}>
-          <Feather name="edit-2" size={24} color="#3B67CE" />
-        </Pressable>
-        <Pressable>
-          <MaterialCommunityIcons name="delete-outline" size={24} color="#ED1B24" />
+      {/* Back arrow on the right */}
+      <View style={styles.headerContainer}>
+        <Pressable style={styles.backArrowButton} onPress={handleBack}>
+          <AntDesign name="close" size={24} color="black" />
         </Pressable>
       </View>
       
@@ -419,6 +395,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     gap: 16,
+  },
+
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+
+  backArrowButton: {
+    padding: 8,
   }
   
 });

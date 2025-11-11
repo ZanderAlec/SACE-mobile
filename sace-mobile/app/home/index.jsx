@@ -1,16 +1,47 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useMemo} from 'react'
 import { View, Text, StyleSheet, Pressable, ActivityIndicator, ScrollView } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'   
-import Entypo from '@expo/vector-icons/Entypo';
 import AreaScreen from './components/visitArea/AreaScreen';
 import RegisterScreen from './components/RegisterScreen';
+import DenunciaScreen from './components/DenunciaScreen';
+import PerfilScreen from './components/PerfilScreen';
+import { useDenuncias } from '@/contexts/DenunciasContext';
+import { cyclesApi } from '@/services/api';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+
+import Entypo from '@expo/vector-icons/Entypo';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+
+import Cycles from './components/Cycles';
 
 function Home() {
   const [activeTab, setActiveTab] = useState('areas');
 
+  const [currentCycle, setCurrentCycle] = useState('');
+  const [currentYear, setCurrentYear] = useState('');
+
+  const { denuncias, checkForNew } = useDenuncias();
+  const pendente = useMemo(() => {
+    return denuncias.filter(denuncia => denuncia.status === 'Pendente');
+  }, [denuncias]);
+  
+ 
+  
+  // Check for new denuncias periodically (every 30 seconds)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkForNew();
+    }, 30000); // Check every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [checkForNew]);
+
   const tabs = [
    "areas", 
-   "registros" 
+   "registros",
+   "denuncias",
+   "perfil"
   ];
   
   const handleTabPress = (tab) => {
@@ -18,16 +49,49 @@ function Home() {
   };
 
 
+
   return (
     <SafeAreaView style={styles.container}>
+      
+      <Cycles setCycle={setCurrentCycle} SetYear={setCurrentYear} />
+
       <View style={styles.containerButtons}>
         <Pressable style={[styles.tab, activeTab === tabs[0] && styles.selectedTab]} onPress={() => handleTabPress(tabs[0])}>
             <Entypo name="location" size={16} color="#333153" />
-          <Text style={styles.tabText}>Àreas de visita</Text>
+          {activeTab === tabs[0] &&
+            <Text style={styles.tabText}>Àreas de visita</Text>
+          }
         </Pressable>
         <Pressable style={[styles.tab, activeTab === tabs[1] && styles.selectedTab]} onPress={() => handleTabPress(tabs[1])}>
             <Entypo name="text-document" size={16} color="#333153" />
-          <Text style={styles.tabText}>Registros</Text>
+          {activeTab === tabs[1] &&
+            <Text style={styles.tabText}>Registros</Text>
+          }
+        </Pressable>
+
+        <Pressable 
+          style={[styles.tab, activeTab === tabs[2] && styles.selectedTab]} 
+          onPress={() => handleTabPress(tabs[2])}
+         disabled={pendente.length === 0}
+        >
+          
+          {
+          pendente.length > 0 
+          ? <MaterialIcons name="notification-important" size={24} color="#333153" />
+          : <FontAwesome5 name="bell" size={16} color="#333153" />
+          }
+          {activeTab === tabs[2] &&
+            <Text style={styles.tabText}>Denúncias</Text>
+          }
+        </Pressable>
+
+        <Pressable 
+        style={[styles.tab, activeTab === tabs[3] && styles.selectedTab]} onPress={() => handleTabPress(tabs[3])}
+        >
+          <FontAwesome name="user-o" size={16} color="black" />
+          {activeTab === tabs[3] &&
+            <Text style={styles.tabText}>Perfil</Text>
+          }
         </Pressable>
       </View>
 
@@ -36,7 +100,9 @@ function Home() {
 
       {/* Areas Content */}
       {activeTab === tabs[0] && <AreaScreen />}
-      {activeTab === tabs[1] && <RegisterScreen />}
+      {activeTab === tabs[1] && <RegisterScreen selectedYear={currentYear} selectedCycle={currentCycle} />}
+      {activeTab === tabs[2] && <DenunciaScreen />}
+      {activeTab === tabs[3] && <PerfilScreen />}
     </SafeAreaView>
   )
 }
@@ -52,17 +118,17 @@ const styles = StyleSheet.create({
   },
   containerButtons: {
     flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 10,
+    justifyContent: 'center',
+
   },
   tab: {
     padding: 12,
     marginHorizontal: 4,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     flexDirection: 'row',
     gap: 10,
     borderBottomWidth: 4,
@@ -81,6 +147,11 @@ const styles = StyleSheet.create({
   containerContent: {
     flex: 1,
     padding: 10,
+  },
+  loadingText: {
+    padding: 12,
+    textAlign: 'center',
+    color: '#666',
   },
 })
 

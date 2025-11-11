@@ -14,6 +14,7 @@ function registerContainer({register, onDelete}) {
         imovel_numero: numero,
         imovel_status: status,
         imovel_tipo: tipo,
+        observacao,
         formulario_tipo,
         area_de_visita = {
             setor,
@@ -125,7 +126,7 @@ function registerContainer({register, onDelete}) {
 
             <View style={styles.containerContent}>
                 <Text>Tipo de formulário </Text>
-                <Text> {formulario_tipo}</Text>
+                <Text style={styles.text}> {formulario_tipo}</Text>
             </View>
 
             <View style={styles.containerContent}>
@@ -135,15 +136,20 @@ function registerContainer({register, onDelete}) {
             <View>
                 <View style={styles.containerContentList}>
                     <Text>Número </Text>
-                    <Text> {numero}</Text>
+                    <Text style={styles.text}> {numero}</Text>
                 </View>
                 <View style={styles.containerContentList}>
                     <Text>Lado </Text>
-                    <Text> {lado}</Text>
+                    <Text style={styles.text}> {lado}</Text>
                 </View>
                 <View style={styles.containerContentList}>
                     <Text>Complemento </Text>
-                    <Text> {complemento}</Text>
+                    <Text style={[styles.text, styles.complemento]}> {complemento}</Text>
+                </View>
+
+                <View style={styles.containerContent}>
+                    <Text>Observações:  </Text>
+                    <Text style={[styles.text, styles.complemento]}> {observacao}</Text>
                 </View>
         
             </View>
@@ -243,6 +249,17 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         color: '#3B67CE',
+    },
+
+    text: {
+        paddingLeft: 30,
+        fontSize: 14,
+        color: '#72777B',
+    },
+
+    complemento: {
+        flexShrink: 1,
+        textAlign: 'right',
     },
     
     modalOverlay: {

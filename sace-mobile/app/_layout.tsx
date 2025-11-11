@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { FormProvider } from '@/contexts/FormContext';
+import { DenunciasProvider } from '@/contexts/DenunciasContext';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -17,16 +18,29 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <FormProvider>
-        {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
-        <ThemeProvider value={DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="form" options={{ headerShown: false }} />
-            <Stack.Screen name="imoveisList" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
+        <DenunciasProvider>
+          {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
+          <ThemeProvider value={DefaultTheme}>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen 
+                name="form" 
+                options={{ 
+                  headerShown: false,
+                  title: '',
+                  headerBackVisible: false,
+                }} 
+              />
+              <Stack.Screen name="imoveisList" options={{ headerShown: false }} />
+              <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+            </Stack>
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </DenunciasProvider>
       </FormProvider>
     </AuthProvider>
   );
