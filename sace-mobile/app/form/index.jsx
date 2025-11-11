@@ -210,6 +210,23 @@ function FieldRegisterForm() {
       
     } catch (error) {
       console.error('Error submitting form:', error);
+      
+      // Handle offline queued operations
+      if (error.message === 'OFFLINE_QUEUED') {
+        const action = isUpdating ? 'atualizado' : 'criado';
+        Alert.alert(
+          'Sem conexão',
+          `O registro será ${action} automaticamente quando a conexão com a internet for restaurada.`,
+          [
+            {
+              text: 'OK',
+              onPress: () => router.back()
+            }
+          ]
+        );
+        return;
+      }
+      
       const action = isUpdating ? 'atualizar' : 'criar';
       const errorMessage = error.response?.data?.message || error.message || `Erro ao ${action} registro`;
       Alert.alert('Erro', errorMessage);

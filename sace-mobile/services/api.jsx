@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import offlineCache from './offlineCache';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -169,6 +170,19 @@ const registersApi = {
         try {
             console.log('createRegister called with:', formData);
             
+            // Check if offline
+            if (!offlineCache.isConnected()) {
+                console.log('Device is offline, queueing CREATE_REGISTER operation...');
+                const operationId = await offlineCache.queueOperation({
+                    type: 'CREATE_REGISTER',
+                    data: formData
+                });
+                // Throw a special error that can be caught by the form to show appropriate message
+                const error = new Error('OFFLINE_QUEUED');
+                error.operationId = operationId;
+                throw error;
+            }
+            
             // Get auth token
             const token = await AsyncStorage.getItem('authToken');
             if (!token) {
@@ -319,6 +333,28 @@ const registersApi = {
             console.log('Request successful:', response.status);
             return responseData;
         } catch (error) {
+            // If it's already our offline queued error, re-throw it
+            if (error.message === 'OFFLINE_QUEUED') {
+                throw error;
+            }
+            
+            // Check if it's a network error and we should queue it
+            if (error.isNetworkError || !error.response) {
+                console.log('Network error detected, queueing CREATE_REGISTER operation...');
+                try {
+                    const operationId = await offlineCache.queueOperation({
+                        type: 'CREATE_REGISTER',
+                        data: formData
+                    });
+                    const offlineError = new Error('OFFLINE_QUEUED');
+                    offlineError.operationId = operationId;
+                    throw offlineError;
+                } catch (queueError) {
+                    // If queueing fails, throw the original error
+                    console.error('Failed to queue operation:', queueError);
+                }
+            }
+            
             console.error('API Error Details:', {
                 message: error.message,
                 response: error.response?.data,
@@ -341,6 +377,20 @@ const registersApi = {
     async updateRegister(registro_de_campo_id, formData) {
         try {
             console.log('updateRegister called with:', { registro_de_campo_id, formData });
+            
+            // Check if offline
+            if (!offlineCache.isConnected()) {
+                console.log('Device is offline, queueing UPDATE_REGISTER operation...');
+                const operationId = await offlineCache.queueOperation({
+                    type: 'UPDATE_REGISTER',
+                    registroId: registro_de_campo_id,
+                    data: formData
+                });
+                // Throw a special error that can be caught by the form to show appropriate message
+                const error = new Error('OFFLINE_QUEUED');
+                error.operationId = operationId;
+                throw error;
+            }
             
             // Get auth token
             const token = await AsyncStorage.getItem('authToken');
@@ -497,6 +547,29 @@ const registersApi = {
             console.log('Update request successful:', response.status);
             return responseData;
         } catch (error) {
+            // If it's already our offline queued error, re-throw it
+            if (error.message === 'OFFLINE_QUEUED') {
+                throw error;
+            }
+            
+            // Check if it's a network error and we should queue it
+            if (error.isNetworkError || !error.response) {
+                console.log('Network error detected, queueing UPDATE_REGISTER operation...');
+                try {
+                    const operationId = await offlineCache.queueOperation({
+                        type: 'UPDATE_REGISTER',
+                        registroId: registro_de_campo_id,
+                        data: formData
+                    });
+                    const offlineError = new Error('OFFLINE_QUEUED');
+                    offlineError.operationId = operationId;
+                    throw offlineError;
+                } catch (queueError) {
+                    // If queueing fails, throw the original error
+                    console.error('Failed to queue operation:', queueError);
+                }
+            }
+            
             console.error('API Error Details:', {
                 message: error.message,
                 response: error.response?.data,

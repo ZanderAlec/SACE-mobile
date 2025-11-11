@@ -17,7 +17,7 @@ function Cycles({setCycle, SetYear}) {
                 const data = await cyclesApi.getCycles();
                 const keys = Object.keys(data);
                 setCyclesYear(data);
-                const mostRecentYear = keys[keys.length - 1];
+                const mostRecentYear = String(keys[keys.length - 1]);
                 setCurrentYear(mostRecentYear);
                 setSelectedYear(mostRecentYear);
                 SetYear(mostRecentYear);
@@ -64,20 +64,25 @@ function Cycles({setCycle, SetYear}) {
                         selectedValue={selectedYear}
                         onValueChange={handleYearChange}
                         style={styles.picker}
+                        mode="dropdown"
                     >
-                        {Object.keys(cyclesYear).map((year, index) => (
-                            <Picker.Item 
-                                key={index} 
-                                label={String(year)} 
-                                value={String(year)} 
-                            />
-                        ))}
+                        {Object.keys(cyclesYear).map((year, index) => {
+                            const yearString = String(year);
+                            return (
+                                <Picker.Item 
+                                    key={index} 
+                                    label={yearString} 
+                                    value={yearString} 
+                                />
+                            );
+                        })}
                     </Picker>
                     
                     <Picker
                         selectedValue={selectedCycle}
                         onValueChange={handleCycleChange}
                         style={styles.picker}
+                        mode="dropdown"
                     >
                         {cyclesYear[selectedYear].map((item, index) => {
                             const itemString = String(item);

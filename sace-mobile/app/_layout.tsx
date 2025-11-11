@@ -7,6 +7,8 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { FormProvider } from '@/contexts/FormContext';
 import { DenunciasProvider } from '@/contexts/DenunciasContext';
+// Initialize offline cache service
+import '@/services/offlineCache';
 
 export const unstable_settings = {
   anchor: '(tabs)',
