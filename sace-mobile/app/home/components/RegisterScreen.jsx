@@ -1,13 +1,15 @@
-import React, { useMemo } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import React, { useMemo, useState } from 'react'
+import { View, Text, StyleSheet, TextInput } from 'react-native'
 import { useRegisters } from '@/hooks/useRegisters';
 import { useAuth } from '@/contexts/AuthContext';
 import RegisterContainer from './registerContainer';
 import { ScrollView, ActivityIndicator, Pressable } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 function RegisterScreen({ selectedYear, selectedCycle }) {
     const { registers, loading, error, refetch } = useRegisters();
     const { userInfo } = useAuth();
+    const [searchText, setSearchText] = useState('');
     
     // Filter registers based on matching nome_completo with agente_nome and cycle/year
     const filteredRegisters = useMemo(() => {
@@ -16,7 +18,7 @@ function RegisterScreen({ selectedYear, selectedCycle }) {
         }
         
         let filtered = registers;
-        console.log(registers);
+        const searchLower = searchText.toLowerCase();
         
         // Filter by user nome_completo if available
         if (userInfo?.nome_completo) {
@@ -53,12 +55,47 @@ function RegisterScreen({ selectedYear, selectedCycle }) {
             });
         }
         
+        // Apply search text
+        if (searchText) {
+            filtered = filtered.filter(register => {
+                const searchableText = [
+                    register.area_de_visita?.setor,
+                    register.agente_nome,
+                    register.formulario_tipo,
+                    register.imovel_numero,
+                    register.imovel_lado,
+                    register.imovel_complemento,
+                    register.observacao
+                ].filter(Boolean).join(' ').toLowerCase();
+                
+                return searchableText.includes(searchLower);
+            });
+        }
+        
         return filtered;
-    }, [registers, userInfo?.nome_completo, selectedYear, selectedCycle]);
+    }, [registers, userInfo?.nome_completo, selectedYear, selectedCycle, searchText]);
     
  
     
-   return (<ScrollView style={styles.scrollView}>
+   return (
+    <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <View style={styles.searchInputContainer}>
+          <FontAwesome name="search" size={18} color="#72777B" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Pesquisar..."
+            value={searchText}
+            onChangeText={setSearchText}
+            placeholderTextColor="#72777B"
+          />
+        </View>
+      </View>
+      
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
+      >
         {loading && (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#3b67ce" />
@@ -86,7 +123,9 @@ function RegisterScreen({ selectedYear, selectedCycle }) {
             <Text style={styles.emptyText}>Nenhum registro encontrado</Text>
           </View>
         )}
-      </ScrollView>)
+      </ScrollView>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -94,9 +133,35 @@ const styles = StyleSheet.create({
       flex: 1,
       backgroundColor: '#f2f6fe',
     },
+    searchContainer: {
+      paddingHorizontal: 16,
+      paddingTop: 10,
+      paddingBottom: 8,
+    },
+    searchInputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'white',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#D7DEF7',
+      paddingHorizontal: 12,
+    },
+    searchIcon: {
+      marginRight: 8,
+    },
+    searchInput: {
+      flex: 1,
+      paddingVertical: 12,
+      fontSize: 16,
+    },
     scrollView: {
       flex: 1,
-      marginTop: 10,
+      backgroundColor: '#f2f6fe',
+    },
+    scrollViewContent: {
+      flexGrow: 1,
+      paddingBottom: 20,
     },
     containerButtons: {
       flexDirection: 'row',
